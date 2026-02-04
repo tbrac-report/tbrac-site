@@ -37,8 +37,14 @@ import { useCreateAssessment } from "@/hooks/use-assessments";
 import { useAssessmentContext } from "@/lib/assessment-context";
 import { useApiToast } from "@/hooks/use-api-toast";
 import { useAuth } from "@/lib/auth-context";
+import { useCreateCustomer } from "@/hooks/use-customers";
 import { AssessmentAuthDialog } from "@/components/assessment-auth-dialog";
-import type { CompanyInfo as APICompanyInfo } from "@/lib/api-types";
+import type {
+  CompanyInfo as APICompanyInfo,
+  CustomerCreate,
+  IndustrySector,
+  OwnershipType,
+} from "@/lib/api-types";
 
 export default function AssessmentStartPage() {
   const { language, t } = useLanguage();
@@ -48,6 +54,7 @@ export default function AssessmentStartPage() {
   const [pendingSubmission, setPendingSubmission] =
     useState<CompanyInfo | null>(null);
   const { create } = useCreateAssessment();
+  const { create: createCustomer } = useCreateCustomer();
   const { setAssessmentId, setCurrentAssessment } = useAssessmentContext();
   const { handleError, showSuccess } = useApiToast();
   const { user, isAuthenticated } = useAuth();
@@ -73,7 +80,35 @@ export default function AssessmentStartPage() {
         return;
       }
 
-      // Map form data to API format
+      // Step 1: Create customer record (required by backend)
+      // Map industry string to IndustrySector enum
+      const industryMap: Record<string, IndustrySector> = {
+        technology: IndustrySector.TECHNOLOGY,
+        telecommunications: IndustrySector.TELECOMMUNICATIONS,
+        financial: IndustrySector.FINANCIAL_SERVICES,
+        healthcare: IndustrySector.HEALTHCARE,
+        energy: IndustrySector.ENERGY,
+        manufacturing: IndustrySector.MANUFACTURING,
+        retail: IndustrySector.RETAIL,
+        other: IndustrySector.OTHER,
+      };
+
+      const customerData: CustomerCreate = {
+        name: data.companyName,
+        industry_sector: industryMap[data.industry] || IndustrySector.OTHER,
+        ownership_type: OwnershipType.PRIVATE, // Default for now
+        state_ownership_percentage: 0,
+        headquarters_country: data.countryOfOrigin,
+      };
+
+      const customer = await createCustomer(customerData);
+
+      if (!customer) {
+        handleError(new Error("Failed to create customer record"));
+        return;
+      }
+
+      // Step 2: Map form data to assessment company_info format
       const companyInfo: APICompanyInfo = {
         company_name: data.companyName,
         country: data.countryOfOrigin,
@@ -83,9 +118,9 @@ export default function AssessmentStartPage() {
         contact_email: data.contactEmail,
       };
 
-      // Create assessment via API using authenticated user's ID
+      // Step 3: Create assessment using customer ID
       const assessment = await create({
-        customer_id: user.id,
+        customer_id: customer.id,
         company_info: companyInfo,
       });
 
