@@ -39,7 +39,6 @@ import {
 import {
   FileText,
   Upload,
-  Download,
   LogOut,
   CheckCircle2,
   Clock,
@@ -123,22 +122,6 @@ export default function CompanyProfilePage() {
     }
   };
 
-  const handleDownload = async (documentId: string, filename: string) => {
-    try {
-      const blob = await api.documents.download(documentId);
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (err) {
-      handleError(err);
-    }
-  };
-
   const handleSignOut = async () => {
     await signOut();
     router.push("/");
@@ -152,12 +135,6 @@ export default function CompanyProfilePage() {
   const progress = assessmentToDisplay?.progress_percentage || 0;
   const status = assessmentToDisplay?.status || "in_progress";
   const companyInfo = assessmentToDisplay?.company_info;
-
-    "Response keys:",
-    assessmentToDisplay?.responses
-      ? Object.keys(assessmentToDisplay.responses)
-      : [],
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -312,7 +289,9 @@ export default function CompanyProfilePage() {
                                 </TableCell>
                                 <TableCell>
                                   {typeof value === "boolean" ? (
-                                    <Badge variant={value ? "default" : "secondary"}>
+                                    <Badge
+                                      variant={value ? "default" : "secondary"}
+                                    >
                                       {value ? "Yes" : "No"}
                                     </Badge>
                                   ) : typeof value === "number" ? (
@@ -428,7 +407,6 @@ export default function CompanyProfilePage() {
                       <TableHead>Size</TableHead>
                       <TableHead>Uploaded</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -460,17 +438,6 @@ export default function CompanyProfilePage() {
                           >
                             {doc.processing_status}
                           </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              handleDownload(doc.id, doc.original_filename)
-                            }
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
