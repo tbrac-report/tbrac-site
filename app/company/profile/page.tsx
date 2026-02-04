@@ -68,21 +68,11 @@ export default function CompanyProfilePage() {
   // Get customer ID from assessment
   useEffect(() => {
     if (assessment?.customer_id) {
-        "Setting customer ID from assessment:",
-        assessment.customer_id,
-      );
       setCustomerId(assessment.customer_id);
     } else if (currentAssessment?.customer_id) {
-        "Setting customer ID from currentAssessment:",
-        currentAssessment.customer_id,
-      );
       setCustomerId(currentAssessment.customer_id);
     }
   }, [assessment, currentAssessment]);
-
-  // Debug: Log documents data
-  useEffect(() => {
-  }, [customerId, documentsData, documentsLoading]);
 
   // Redirect if not authenticated
   useEffect(() => {
