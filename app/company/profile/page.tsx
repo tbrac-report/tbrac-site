@@ -305,8 +305,8 @@ export default function CompanyProfilePage() {
                 </Button>
               )}
 
-              {(status === "completed" || status === "submitted") &&
-                assessmentToDisplay?.responses && (
+              {assessmentToDisplay?.responses &&
+                Object.keys(assessmentToDisplay.responses).length > 0 && (
                   <div className="mt-4 space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-sm font-semibold text-foreground">
