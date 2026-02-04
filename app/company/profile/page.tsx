@@ -384,6 +384,7 @@ export default function CompanyProfilePage() {
                           type="file"
                           onChange={handleFileSelect}
                           accept=".pdf,.docx,.png,.jpg,.jpeg"
+                          className="cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                         />
                         <p className="text-xs text-muted-foreground">
                           Accepted formats: PDF, DOCX, PNG, JPG, JPEG (Max 50MB)

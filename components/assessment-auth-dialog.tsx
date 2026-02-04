@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useApiToast } from "@/hooks/use-api-toast";
 import {
@@ -31,17 +31,11 @@ export function AssessmentAuthDialog({
   prefilledName = "",
 }: AssessmentAuthDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState(prefilledEmail);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState(prefilledName);
+  const [name, setName] = useState("");
   const { signIn, signUp } = useAuth();
   const { handleError, showSuccess } = useApiToast();
-
-  // Update email/name when props change
-  useEffect(() => {
-    if (prefilledEmail) setEmail(prefilledEmail);
-    if (prefilledName) setName(prefilledName);
-  }, [prefilledEmail, prefilledName]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
