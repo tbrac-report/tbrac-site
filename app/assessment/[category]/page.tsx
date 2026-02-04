@@ -38,6 +38,7 @@ import { useAssessmentContext } from "@/lib/assessment-context";
 import {
   useSaveAssessmentAnswers,
   useAssessment,
+  useSubmitAssessment,
 } from "@/hooks/use-assessments";
 import { useApiToast } from "@/hooks/use-api-toast";
 
@@ -54,6 +55,7 @@ export default function CategoryAssessmentPage({ params }: PageProps) {
   const { assessmentId } = useAssessmentContext();
   const { data: assessment } = useAssessment(assessmentId);
   const { saveAnswers } = useSaveAssessmentAnswers();
+  const { submit } = useSubmitAssessment();
   const { handleError, showSuccess } = useApiToast();
 
   const category = getCategoryById(resolvedParams.category);
@@ -142,7 +144,14 @@ export default function CategoryAssessmentPage({ params }: PageProps) {
         const nextCategory = ASSESSMENT_CATEGORIES[categoryIndex + 1];
         router.push(`/assessment/${nextCategory.id}`);
       } else {
-        router.push("/assessment/results");
+        // Assessment complete - submit and go to profile
+        if (assessmentId) {
+          await submit(assessmentId);
+          showSuccess(
+            "Assessment submitted successfully! You can now upload supporting documents.",
+          );
+        }
+        router.push("/company/profile");
       }
     } catch (err) {
       handleError(err);
@@ -278,11 +287,15 @@ export default function CategoryAssessmentPage({ params }: PageProps) {
                 </Button>
                 <Button type="submit" className="flex-1" disabled={isSaving}>
                   {isSaving
-                    ? "Saving..."
+                    ? "Submitting..."
                     : categoryIndex < ASSESSMENT_CATEGORIES.length - 1
                       ? t("nextCategory")
-                      : t("viewResults")}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                      : "Submit Assessment"}
+                  {categoryIndex < ASSESSMENT_CATEGORIES.length - 1 ? (
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  ) : (
+                    <CheckCircle2 className="ml-2 h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </form>

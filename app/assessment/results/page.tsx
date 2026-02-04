@@ -270,12 +270,20 @@ export default function AssessmentResultsPage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-3 w-full md:w-auto">
+                  <Button
+                    size="lg"
+                    className="w-full md:w-auto whitespace-nowrap bg-white text-primary hover:bg-white/90"
+                    onClick={() => router.push("/company/profile")}
+                  >
+                    <Award className="mr-2 h-4 w-4" />
+                    View Profile & Upload Documents
+                  </Button>
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
                         size="lg"
-                        variant="secondary"
-                        className="w-full md:w-auto whitespace-nowrap"
+                        variant="outline"
+                        className="w-full md:w-auto whitespace-nowrap bg-transparent border-white/20 text-primary-foreground hover:bg-white/10"
                         disabled={isExporting}
                       >
                         <Download className="mr-2 h-4 w-4" />
