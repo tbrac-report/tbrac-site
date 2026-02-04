@@ -1,54 +1,56 @@
-import { useState, useCallback } from 'react'
-import { api, APIError } from '@/lib/api-client'
+import { useState, useCallback, useEffect } from "react";
+import { api, APIError } from "@/lib/api-client";
 import type {
   Document,
+  DocumentListItem,
   DocumentUploadResponse,
   DocumentDownloadResponse,
-} from '@/lib/api-types'
+  PaginatedResponse,
+} from "@/lib/api-types";
 
 export function useDocumentUpload(customerId: string) {
-  const [uploading, setUploading] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [error, setError] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   const upload = async (
-    files: File[]
+    files: File[],
   ): Promise<DocumentUploadResponse[] | null> => {
-    setUploading(true)
-    setError(null)
-    setProgress(0)
+    setUploading(true);
+    setError(null);
+    setProgress(0);
 
     try {
-      const results = await api.documents.upload(customerId, files)
-      setProgress(100)
-      return results
+      const results = await api.documents.upload(customerId, files);
+      setProgress(100);
+      return results;
     } catch (err) {
-      setError(err instanceof APIError ? err.message : 'Upload failed')
-      throw err
+      setError(err instanceof APIError ? err.message : "Upload failed");
+      throw err;
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
-  return { upload, uploading, progress, error }
+  return { upload, uploading, progress, error };
 }
 
 export function useDocumentDownload() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const download = async (
     documentId: string,
-    filename: string
+    filename: string,
   ): Promise<void> => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
-      const { download_url } = await api.documents.getDownloadUrl(documentId)
+      const { download_url } = await api.documents.getDownloadUrl(documentId);
 
       // Open in new tab
-      window.open(download_url, '_blank')
+      window.open(download_url, "_blank");
 
       // Alternative: Trigger download directly
       // const link = document.createElement('a')
@@ -56,90 +58,129 @@ export function useDocumentDownload() {
       // link.download = filename
       // link.click()
     } catch (err) {
-      setError(err instanceof APIError ? err.message : 'Download failed')
-      throw err
+      setError(err instanceof APIError ? err.message : "Download failed");
+      throw err;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  return { download, loading, error }
+  return { download, loading, error };
 }
 
 export function useDocument(id: string) {
-  const [data, setData] = useState<Document | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [data, setData] = useState<Document | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    if (!id) return
+    if (!id) return;
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      const result = await api.documents.get(id)
-      setData(result)
+      const result = await api.documents.get(id);
+      setData(result);
     } catch (err) {
-      setError(err instanceof APIError ? err.message : 'Failed to load document')
+      setError(
+        err instanceof APIError ? err.message : "Failed to load document",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [id])
+  }, [id]);
 
-  return { data, loading, error, refetch: load }
+  return { data, loading, error, refetch: load };
 }
 
 export function useUpdateDocumentClassification() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const updateClassification = async (
     documentId: string,
-    documentType: string
+    documentType: string,
   ): Promise<Document | null> => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       const result = await api.documents.updateClassification(
         documentId,
-        documentType
-      )
-      return result
+        documentType,
+      );
+      return result;
     } catch (err) {
       setError(
         err instanceof APIError
           ? err.message
-          : 'Failed to update classification'
-      )
-      throw err
+          : "Failed to update classification",
+      );
+      throw err;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  return { updateClassification, loading, error }
+  return { updateClassification, loading, error };
 }
 
 export function useDeleteDocument() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const deleteDocument = async (id: string): Promise<void> => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
-      await api.documents.delete(id)
+      await api.documents.delete(id);
     } catch (err) {
       setError(
-        err instanceof APIError ? err.message : 'Failed to delete document'
-      )
-      throw err
+        err instanceof APIError ? err.message : "Failed to delete document",
+      );
+      throw err;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  return { deleteDocument, loading, error }
+  return { deleteDocument, loading, error };
+}
+
+export function useCustomerDocuments(
+  customerId: string,
+  params?: { page?: number; pageSize?: number },
+) {
+  const [data, setData] = useState<PaginatedResponse<DocumentListItem> | null>(
+    null,
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    if (!customerId) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await api.customers.documents(customerId, {
+        page: params?.page,
+        page_size: params?.pageSize,
+      });
+      setData(result);
+    } catch (err) {
+      setError(
+        err instanceof APIError ? err.message : "Failed to load documents",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [customerId, params?.page, params?.pageSize]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  return { data, loading, error, refetch: load };
 }
