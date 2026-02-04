@@ -107,10 +107,50 @@ export default function AssessmentStartPage() {
         headquarters_country: data.countryOfOrigin,
       };
 
-      const customer = await createCustomer(customerData);
+      let customer;
+      try {
+        customer = await createCustomer(customerData);
+      } catch (err: any) {
+        // If customer already exists (409 Conflict), fetch existing customer
+        if (err?.status === 409) {
+          console.log("Customer already exists, fetching existing customer...");
+
+          try {
+            // Try to find the existing customer by name
+            const customersResponse = await api.customers.list({
+              search: data.companyName,
+              page: 1,
+              page_size: 10,
+            });
+
+            // Find exact match
+            const existingCustomer = customersResponse.items.find(
+              (c) => c.name.toLowerCase() === data.companyName.toLowerCase(),
+            );
+
+            if (existingCustomer) {
+              console.log("Found existing customer:", existingCustomer.id);
+              // Fetch full customer details
+              customer = await api.customers.get(existingCustomer.id);
+            } else {
+              handleError(
+                new Error(
+                  "Customer exists but could not be found. Please try a different company name.",
+                ),
+              );
+              return;
+            }
+          } catch (fetchErr) {
+            handleError(new Error("Failed to retrieve existing customer."));
+            return;
+          }
+        } else {
+          throw err;
+        }
+      }
 
       if (!customer) {
-        handleError(new Error("Failed to create customer record"));
+        handleError(new Error("Failed to create or retrieve customer record"));
         return;
       }
 
