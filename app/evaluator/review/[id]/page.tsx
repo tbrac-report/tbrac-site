@@ -1,95 +1,111 @@
-"use client"
+"use client";
 
-import { use, useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { ASSESSMENT_CATEGORIES, getCategoryById } from "@/lib/assessment-data"
-import { ArrowLeft, CheckCircle2, AlertCircle, Send, FileText, Building2 } from "lucide-react"
-import type { Submission, EvaluatorNote } from "@/lib/evaluator-types"
+import { use, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ProtectedRoute } from "@/components/protected-route";
+import { useAuth } from "@/lib/auth-context";
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { ASSESSMENT_CATEGORIES, getCategoryById } from "@/lib/assessment-data";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  AlertCircle,
+  Send,
+  FileText,
+  Building2,
+} from "lucide-react";
+import type { Submission, EvaluatorNote } from "@/lib/evaluator-types";
 
 interface PageProps {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }
 
-export default function EvaluatorReviewPage({ params }: PageProps) {
-  const resolvedParams = use(params)
-  const router = useRouter()
-  const [submission, setSubmission] = useState<Submission | null>(null)
-  const [notes, setNotes] = useState<EvaluatorNote[]>([])
-  const [newNote, setNewNote] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string>("")
+function ReviewContent({ params }: PageProps) {
+  const resolvedParams = use(params);
+  const router = useRouter();
+  const { user } = useAuth();
+  const [submission, setSubmission] = useState<Submission | null>(null);
+  const [notes, setNotes] = useState<EvaluatorNote[]>([]);
+  const [newNote, setNewNote] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+
+  const evaluatorName = user?.email?.split("@")[0] || "Evaluator";
 
   useEffect(() => {
-    // Check if evaluator is logged in
-    const session = localStorage.getItem("evaluator_session")
-    if (!session) {
-      router.push("/evaluator-login")
-      return
-    }
-
     // Load submission (in production, fetch from backend)
-    loadSubmission()
-  }, [router, resolvedParams.id])
+    loadSubmission();
+  }, [resolvedParams.id]);
 
   const loadSubmission = () => {
     // For demo, load from localStorage
-    const saved = localStorage.getItem("tbrac_submission")
+    const saved = localStorage.getItem("tbrac_submission");
     if (saved && resolvedParams.id === "SUB-001") {
-      const sub = JSON.parse(saved)
+      const sub = JSON.parse(saved);
       setSubmission({
         id: "SUB-001",
         ...sub,
         lastUpdated: sub.submittedAt,
         evaluatorNotes: [],
-      })
+      });
     } else {
       // Mock submission for demo
-      alert("Submission not found. Redirecting to dashboard.")
-      router.push("/evaluator/dashboard")
+      alert("Submission not found. Redirecting to dashboard.");
+      router.push("/evaluator/dashboard");
     }
-  }
+  };
 
   const handleAddNote = () => {
-    if (!newNote.trim()) return
+    if (!newNote.trim()) return;
 
     const note: EvaluatorNote = {
       id: `NOTE-${Date.now()}`,
-      evaluatorName: "Current Evaluator",
+      evaluatorName,
       categoryId: selectedCategory || undefined,
       note: newNote,
       createdAt: new Date().toISOString(),
       type: "comment",
-    }
+    };
 
-    setNotes([...notes, note])
-    setNewNote("")
-    setSelectedCategory("")
-  }
+    setNotes([...notes, note]);
+    setNewNote("");
+    setSelectedCategory("");
+  };
 
   const handleApprove = () => {
     if (confirm("Are you sure you want to approve this assessment?")) {
-      alert("Assessment approved! Certificate will be generated.")
-      router.push("/evaluator/dashboard")
+      alert("Assessment approved! Certificate will be generated.");
+      router.push("/evaluator/dashboard");
     }
-  }
+  };
 
   const handleRequestChanges = () => {
     if (notes.length === 0) {
-      alert("Please add notes explaining what changes are needed.")
-      return
+      alert("Please add notes explaining what changes are needed.");
+      return;
     }
     if (confirm("Request changes from the applicant?")) {
-      alert("Change request sent to applicant.")
-      router.push("/evaluator/dashboard")
+      alert("Change request sent to applicant.");
+      router.push("/evaluator/dashboard");
     }
-  }
+  };
 
   if (!submission) {
     return (
@@ -104,7 +120,7 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -115,7 +131,10 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <Button variant="ghost" onClick={() => router.push("/evaluator/dashboard")}>
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/evaluator/dashboard")}
+            >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Dashboard
             </Button>
@@ -141,24 +160,38 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div>
-                  <Label className="text-muted-foreground">Country of Origin</Label>
-                  <p className="font-medium mt-1">{submission.companyInfo.countryOfOrigin}</p>
+                  <Label className="text-muted-foreground">
+                    Country of Origin
+                  </Label>
+                  <p className="font-medium mt-1">
+                    {submission.companyInfo.countryOfOrigin}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Industry</Label>
-                  <p className="font-medium mt-1">{submission.companyInfo.industry}</p>
+                  <p className="font-medium mt-1">
+                    {submission.companyInfo.industry}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Company Size</Label>
-                  <p className="font-medium mt-1">{submission.companyInfo.companySize}</p>
+                  <p className="font-medium mt-1">
+                    {submission.companyInfo.companySize}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">Contact Person</Label>
-                  <p className="font-medium mt-1">{submission.companyInfo.contactName}</p>
+                  <Label className="text-muted-foreground">
+                    Contact Person
+                  </Label>
+                  <p className="font-medium mt-1">
+                    {submission.companyInfo.contactName}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Contact Email</Label>
-                  <p className="font-medium mt-1">{submission.companyInfo.contactEmail}</p>
+                  <p className="font-medium mt-1">
+                    {submission.companyInfo.contactEmail}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Overall Score</Label>
@@ -175,7 +208,9 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
             <div className="lg:col-span-2 space-y-6">
               <Tabs defaultValue="responses">
                 <TabsList>
-                  <TabsTrigger value="responses">Assessment Responses</TabsTrigger>
+                  <TabsTrigger value="responses">
+                    Assessment Responses
+                  </TabsTrigger>
                   <TabsTrigger value="analysis">Risk Analysis</TabsTrigger>
                 </TabsList>
 
@@ -183,46 +218,74 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
                   <Card>
                     <CardHeader>
                       <CardTitle>Detailed Responses</CardTitle>
-                      <CardDescription>Review all assessment answers by category</CardDescription>
+                      <CardDescription>
+                        Review all assessment answers by category
+                      </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Accordion type="single" collapsible className="space-y-2">
+                      <Accordion
+                        type="single"
+                        collapsible
+                        className="space-y-2"
+                      >
                         {ASSESSMENT_CATEGORIES.map((category) => {
-                          const categoryScore = submission.result.categoryScores.find(
-                            (cs) => cs.categoryId === category.id,
-                          )
+                          const categoryScore =
+                            submission.result.categoryScores.find(
+                              (cs) => cs.categoryId === category.id,
+                            );
                           return (
-                            <AccordionItem key={category.id} value={category.id}>
+                            <AccordionItem
+                              key={category.id}
+                              value={category.id}
+                            >
                               <AccordionTrigger className="hover:no-underline">
                                 <div className="flex items-center justify-between w-full pr-4">
-                                  <span className="font-semibold">{category.name}</span>
+                                  <span className="font-semibold">
+                                    {category.name}
+                                  </span>
                                   {categoryScore && (
-                                    <Badge variant="outline">{Math.round(categoryScore.score)}/100</Badge>
+                                    <Badge variant="outline">
+                                      {Math.round(categoryScore.score)}/100
+                                    </Badge>
                                   )}
                                 </div>
                               </AccordionTrigger>
                               <AccordionContent>
                                 <div className="space-y-4 pt-4">
                                   {category.subcategories.map((subcategory) => (
-                                    <div key={subcategory.id} className="space-y-3">
-                                      <h4 className="font-medium text-sm text-muted-foreground">{subcategory.name}</h4>
+                                    <div
+                                      key={subcategory.id}
+                                      className="space-y-3"
+                                    >
+                                      <h4 className="font-medium text-sm text-muted-foreground">
+                                        {subcategory.name}
+                                      </h4>
                                       {subcategory.questions.map((question) => {
-                                        const answer = submission.responses[question.id]
+                                        const answer =
+                                          submission.responses[question.id];
                                         return (
-                                          <div key={question.id} className="pl-4 border-l-2 border-muted py-2">
-                                            <p className="text-sm mb-2">{question.text}</p>
+                                          <div
+                                            key={question.id}
+                                            className="pl-4 border-l-2 border-muted py-2"
+                                          >
+                                            <p className="text-sm mb-2">
+                                              {question.text}
+                                            </p>
                                             <p className="text-sm font-semibold text-primary">
-                                              Answer: {answer !== undefined ? String(answer) : "Not answered"}
+                                              Answer:{" "}
+                                              {answer !== undefined
+                                                ? String(answer)
+                                                : "Not answered"}
                                             </p>
                                           </div>
-                                        )
+                                        );
                                       })}
                                     </div>
                                   ))}
                                 </div>
                               </AccordionContent>
                             </AccordionItem>
-                          )
+                          );
                         })}
                       </Accordion>
                     </CardContent>
@@ -233,7 +296,9 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
                   <Card>
                     <CardHeader>
                       <CardTitle>Risk Analysis Summary</CardTitle>
-                      <CardDescription>AI-generated insights and recommendations</CardDescription>
+                      <CardDescription>
+                        AI-generated insights and recommendations
+                      </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                       {submission.result.strengths.length > 0 && (
@@ -243,11 +308,16 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
                             Strengths
                           </h3>
                           <ul className="space-y-2">
-                            {submission.result.strengths.map((strength, idx) => (
-                              <li key={idx} className="text-sm text-muted-foreground pl-4">
-                                • {strength}
-                              </li>
-                            ))}
+                            {submission.result.strengths.map(
+                              (strength, idx) => (
+                                <li
+                                  key={idx}
+                                  className="text-sm text-muted-foreground pl-4"
+                                >
+                                  • {strength}
+                                </li>
+                              ),
+                            )}
                           </ul>
                         </div>
                       )}
@@ -260,7 +330,10 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
                           </h3>
                           <ul className="space-y-2">
                             {submission.result.concerns.map((concern, idx) => (
-                              <li key={idx} className="text-sm text-muted-foreground pl-4">
+                              <li
+                                key={idx}
+                                className="text-sm text-muted-foreground pl-4"
+                              >
                                 • {concern}
                               </li>
                             ))}
@@ -275,7 +348,10 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
                         </h3>
                         <ul className="space-y-2">
                           {submission.result.recommendations.map((rec, idx) => (
-                            <li key={idx} className="text-sm text-muted-foreground pl-4">
+                            <li
+                              key={idx}
+                              className="text-sm text-muted-foreground pl-4"
+                            >
                               {idx + 1}. {rec}
                             </li>
                           ))}
@@ -322,16 +398,25 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
                     />
                   </div>
 
-                  <Button onClick={handleAddNote} className="w-full" disabled={!newNote.trim()}>
+                  <Button
+                    onClick={handleAddNote}
+                    className="w-full"
+                    disabled={!newNote.trim()}
+                  >
                     <Send className="mr-2 h-4 w-4" />
                     Add Note
                   </Button>
 
                   {notes.length > 0 && (
                     <div className="mt-6 space-y-3 pt-6 border-t border-border">
-                      <h4 className="font-semibold text-sm">Your Notes ({notes.length})</h4>
+                      <h4 className="font-semibold text-sm">
+                        Your Notes ({notes.length})
+                      </h4>
                       {notes.map((note) => (
-                        <div key={note.id} className="text-sm p-3 rounded-lg bg-muted">
+                        <div
+                          key={note.id}
+                          className="text-sm p-3 rounded-lg bg-muted"
+                        >
                           {note.categoryId && (
                             <Badge variant="outline" className="mb-2 text-xs">
                               {getCategoryById(note.categoryId)?.name}
@@ -351,11 +436,18 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
                   <CardTitle>Review Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button onClick={handleApprove} className="w-full bg-green-600 hover:bg-green-700">
+                  <Button
+                    onClick={handleApprove}
+                    className="w-full bg-green-600 hover:bg-green-700"
+                  >
                     <CheckCircle2 className="mr-2 h-4 w-4" />
                     Approve Assessment
                   </Button>
-                  <Button onClick={handleRequestChanges} variant="outline" className="w-full bg-transparent">
+                  <Button
+                    onClick={handleRequestChanges}
+                    variant="outline"
+                    className="w-full bg-transparent"
+                  >
                     <AlertCircle className="mr-2 h-4 w-4" />
                     Request Changes
                   </Button>
@@ -366,5 +458,13 @@ export default function EvaluatorReviewPage({ params }: PageProps) {
         </div>
       </div>
     </div>
-  )
+  );
+}
+
+export default function EvaluatorReviewPage({ params }: PageProps) {
+  return (
+    <ProtectedRoute>
+      <ReviewContent params={params} />
+    </ProtectedRoute>
+  );
 }

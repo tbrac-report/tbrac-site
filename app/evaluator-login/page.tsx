@@ -1,43 +1,45 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Shield, Lock, User } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Shield, Lock, User } from "lucide-react";
 
 export default function EvaluatorLoginPage() {
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const { signIn } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
-    // Demo login - in production this would authenticate against a backend
-    // For demo purposes: any email with password "evaluator123"
-    if (password === "evaluator123") {
-      localStorage.setItem(
-        "evaluator_session",
-        JSON.stringify({
-          email,
-          name: email.split("@")[0],
-          loginTime: new Date().toISOString(),
-        }),
-      )
-      router.push("/evaluator/dashboard")
-    } else {
-      alert("Invalid credentials. Demo password: evaluator123")
-      setIsLoading(false)
+    try {
+      await signIn(email, password);
+      router.push("/evaluator/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to sign in");
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -49,17 +51,28 @@ export default function EvaluatorLoginPage() {
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
               <Shield className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Evaluator Portal</h1>
-            <p className="text-muted-foreground">Access the TBRAC assessment review dashboard</p>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Evaluator Portal
+            </h1>
+            <p className="text-muted-foreground">
+              Access the TBRAC assessment review dashboard
+            </p>
           </div>
 
           <Card>
             <CardHeader>
               <CardTitle>Sign In</CardTitle>
-              <CardDescription>Enter your evaluator credentials to continue</CardDescription>
+              <CardDescription>
+                Enter your evaluator credentials to continue
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
+                {error && (
+                  <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                    {error}
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
@@ -90,7 +103,6 @@ export default function EvaluatorLoginPage() {
                       required
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground">Demo password: evaluator123</p>
                 </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
@@ -106,5 +118,5 @@ export default function EvaluatorLoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
