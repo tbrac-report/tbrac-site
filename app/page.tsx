@@ -1,14 +1,21 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Header } from "@/components/header"
-import { CheckCircle2, Shield, Users, FileText, TrendingUp, Lock } from "lucide-react"
-import Link from "next/link"
-import { useLanguage } from "@/lib/language-context"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Header } from "@/components/header";
+import {
+  CheckCircle2,
+  Shield,
+  Users,
+  FileText,
+  TrendingUp,
+  Lock,
+} from "lucide-react";
+import Link from "next/link";
+import { useLanguage } from "@/lib/language-context";
 
 export default function HomePage() {
-  const { t } = useLanguage()
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,6 +55,14 @@ export default function HomePage() {
                     asChild
                     className="bg-background/10 backdrop-blur-sm text-primary-foreground border-primary-foreground/20 hover:bg-background/20 text-lg px-8 py-6"
                   >
+                    <Link href="/company/login">Sign In</Link>
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    asChild
+                    className="bg-background/10 backdrop-blur-sm text-primary-foreground border-primary-foreground/20 hover:bg-background/20 text-lg px-8 py-6"
+                  >
                     <Link href="/about">{t("learnMore")}</Link>
                   </Button>
                 </div>
@@ -57,7 +72,9 @@ export default function HomePage() {
                   asChild
                   className="bg-transparent backdrop-blur-sm text-primary-foreground border-primary-foreground/30 hover:bg-background/10 text-base px-6 py-4 w-fit"
                 >
-                  <Link href="/recalculate">{t("recalculateExistingReport")}</Link>
+                  <Link href="/recalculate">
+                    {t("recalculateExistingReport")}
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -71,10 +88,16 @@ export default function HomePage() {
                       <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                         {t("tbracCompositeScore")}
                       </div>
-                      <div className="text-7xl sm:text-8xl font-bold text-foreground">96</div>
+                      <div className="text-7xl sm:text-8xl font-bold text-foreground">
+                        96
+                      </div>
                       <div className="space-y-2">
-                        <div className="text-lg font-semibold text-secondary">{t("congratsBoost")}</div>
-                        <div className="text-2xl font-bold text-foreground">{t("excellent")}</div>
+                        <div className="text-lg font-semibold text-secondary">
+                          {t("congratsBoost")}
+                        </div>
+                        <div className="text-2xl font-bold text-foreground">
+                          {t("excellent")}
+                        </div>
                       </div>
                     </div>
 
@@ -87,7 +110,9 @@ export default function HomePage() {
 
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>0</span>
-                      <span className="text-xs underline">{t("sampleScore")}</span>
+                      <span className="text-xs underline">
+                        {t("sampleScore")}
+                      </span>
                       <span>100</span>
                     </div>
 
@@ -104,7 +129,6 @@ export default function HomePage() {
               </Card>
             </div>
           </div>
-
         </div>
 
         {/* Disclaimer text - positioned at bottom right */}
@@ -124,7 +148,9 @@ export default function HomePage() {
                 <CheckCircle2 className="h-8 w-8 text-accent" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg mb-2 text-foreground">{t("trustIndicator1")}</h3>
+                <h3 className="font-semibold text-lg mb-2 text-foreground">
+                  {t("trustIndicator1")}
+                </h3>
               </div>
             </div>
 
@@ -133,7 +159,9 @@ export default function HomePage() {
                 <CheckCircle2 className="h-8 w-8 text-accent" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg mb-2 text-foreground">{t("trustIndicator2")}</h3>
+                <h3 className="font-semibold text-lg mb-2 text-foreground">
+                  {t("trustIndicator2")}
+                </h3>
               </div>
             </div>
 
@@ -142,7 +170,9 @@ export default function HomePage() {
                 <CheckCircle2 className="h-8 w-8 text-accent" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg mb-2 text-foreground">{t("trustIndicator3")}</h3>
+                <h3 className="font-semibold text-lg mb-2 text-foreground">
+                  {t("trustIndicator3")}
+                </h3>
               </div>
             </div>
           </div>
@@ -194,13 +224,20 @@ export default function HomePage() {
                 description: t("nationalSecurityDesc"),
               },
             ].map((feature, index) => (
-              <Card key={index} className="border-border hover:border-accent transition-colors">
+              <Card
+                key={index}
+                className="border-border hover:border-accent transition-colors"
+              >
                 <CardContent className="p-6 space-y-4">
                   <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
                     <feature.icon className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold text-foreground">{feature.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                  <h3 className="text-xl font-semibold text-foreground">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {feature.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -215,7 +252,9 @@ export default function HomePage() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-primary-foreground text-balance">
               {t("ctaTitle")}
             </h2>
-            <p className="text-lg sm:text-xl text-primary-foreground/90 leading-relaxed">{t("ctaDescription")}</p>
+            <p className="text-lg sm:text-xl text-primary-foreground/90 leading-relaxed">
+              {t("ctaDescription")}
+            </p>
             <Button
               size="lg"
               asChild
@@ -232,25 +271,40 @@ export default function HomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">{t("tbracReports")}</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">{t("footerDescription")}</p>
+              <h4 className="font-semibold text-foreground">
+                {t("tbracReports")}
+              </h4>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {t("footerDescription")}
+              </p>
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">{t("resources")}</h4>
+              <h4 className="font-semibold text-foreground">
+                {t("resources")}
+              </h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/methodology" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="/methodology"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     {t("methodology")}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/case-studies" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="/case-studies"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     {t("caseStudies")}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="/faq"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     {t("faq")}
                   </Link>
                 </li>
@@ -261,12 +315,18 @@ export default function HomePage() {
               <h4 className="font-semibold text-foreground">{t("company")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="/about"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     {t("aboutUs")}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="/contact"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     {t("contact")}
                   </Link>
                 </li>
@@ -277,12 +337,18 @@ export default function HomePage() {
               <h4 className="font-semibold text-foreground">{t("legal")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="/privacy"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     {t("privacyPolicy")}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Link
+                    href="/terms"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     {t("termsOfService")}
                   </Link>
                 </li>
@@ -298,5 +364,5 @@ export default function HomePage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

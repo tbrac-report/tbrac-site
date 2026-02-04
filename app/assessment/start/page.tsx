@@ -59,8 +59,6 @@ export default function AssessmentStartPage() {
   const { handleError, showSuccess } = useApiToast();
   const { user, isAuthenticated } = useAuth();
 
-  console.log("AssessmentStartPage render - isSubmitting:", isSubmitting);
-
   const form = useForm<CompanyInfo>({
     resolver: zodResolver(companyInfoSchema),
     defaultValues: {
@@ -76,26 +74,18 @@ export default function AssessmentStartPage() {
   // Auto-submit when user becomes authenticated and there's pending data
   useEffect(() => {
     if (isAuthenticated && user && pendingSubmission && !isSubmitting) {
-      console.log(
-        "User authenticated with pending submission, auto-submitting",
-      );
       createAssessmentWithAuth(pendingSubmission);
     }
   }, [isAuthenticated, user, pendingSubmission]);
 
   async function createAssessmentWithAuth(data: CompanyInfo) {
-    console.log("=== createAssessmentWithAuth START ===");
     setIsSubmitting(true);
-    console.log("Set isSubmitting to true");
 
     try {
       if (!user) {
-        console.log("ERROR: No user found");
         handleError(new Error("Please sign in to continue"));
         return;
       }
-
-      console.log("User found, creating customer...");
       // Step 1: Create customer record (required by backend)
       // Map industry string to IndustrySector enum
       const industryMap: Record<string, IndustrySector> = {
@@ -117,12 +107,9 @@ export default function AssessmentStartPage() {
         headquarters_country: data.countryOfOrigin,
       };
 
-      console.log("Customer data:", customerData);
       const customer = await createCustomer(customerData);
-      console.log("Customer created:", customer);
 
       if (!customer) {
-        console.log("ERROR: Failed to create customer");
         handleError(new Error("Failed to create customer record"));
         return;
       }
@@ -137,40 +124,29 @@ export default function AssessmentStartPage() {
         contact_email: data.contactEmail,
       };
 
-      console.log("Creating assessment with customer_id:", customer.id);
       // Step 3: Create assessment using customer ID
       const assessment = await create({
         customer_id: customer.id,
         company_info: companyInfo,
       });
-      console.log("Assessment created:", assessment);
 
       if (assessment) {
         setAssessmentId(assessment.id);
         setCurrentAssessment(assessment);
         showSuccess("Assessment started successfully");
-        console.log("Redirecting to regulatory-scrutiny...");
         router.push("/assessment/regulatory-scrutiny");
       }
     } catch (err) {
-      console.error("ERROR in createAssessmentWithAuth:", err);
       handleError(err);
     } finally {
-      console.log("=== createAssessmentWithAuth FINALLY ===");
       setIsSubmitting(false);
       setPendingSubmission(null);
     }
   }
 
   async function onSubmit(data: CompanyInfo) {
-    console.log("=== onSubmit called ===");
-    console.log("Form data:", data);
-    console.log("isAuthenticated:", isAuthenticated);
-    console.log("user:", user);
-
     // Check if user is authenticated
     if (!isAuthenticated || !user) {
-      console.log("User not authenticated, showing auth dialog");
       // Store form data and show auth dialog
       setPendingSubmission(data);
       setShowAuthDialog(true);
@@ -178,7 +154,6 @@ export default function AssessmentStartPage() {
     }
 
     // User is authenticated, proceed
-    console.log("User authenticated, creating assessment");
     await createAssessmentWithAuth(data);
   }
 

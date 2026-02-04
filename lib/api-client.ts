@@ -38,22 +38,6 @@ async function getAuthHeaders(): Promise<HeadersInit> {
     throw new APIError("Not authenticated", 401);
   }
 
-  // Debug: Log token header and payload to check algorithm and audience
-  try {
-    const tokenParts = session.access_token.split(".");
-    if (tokenParts.length === 3) {
-      const header = JSON.parse(atob(tokenParts[0]));
-      const payload = JSON.parse(atob(tokenParts[1]));
-      console.log("JWT Token Header:", header);
-      console.log("JWT Algorithm:", header.alg);
-      console.log("JWT Payload:", payload);
-      console.log("JWT Audience (aud):", payload.aud);
-      console.log("JWT Issuer (iss):", payload.iss);
-    }
-  } catch (e) {
-    console.error("Failed to decode token:", e);
-  }
-
   return {
     Authorization: `Bearer ${session.access_token}`,
     "Content-Type": "application/json",

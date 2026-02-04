@@ -272,14 +272,47 @@ export default function CompanyProfilePage() {
                 </Button>
               )}
 
-              {(status === "completed" || status === "submitted") && (
-                <Button
-                  variant="outline"
-                  onClick={() => router.push("/assessment/results")}
-                >
-                  View Results
-                </Button>
-              )}
+              {(status === "completed" || status === "submitted") &&
+                assessmentToDisplay?.responses && (
+                  <div className="mt-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-foreground">
+                        Your Assessment Responses
+                      </h3>
+                      <Badge variant="outline">
+                        {Object.keys(assessmentToDisplay.responses).length}{" "}
+                        Responses
+                      </Badge>
+                    </div>
+                    <div className="rounded-lg border border-border bg-muted/30 p-4 max-h-96 overflow-y-auto">
+                      <div className="space-y-3">
+                        {Object.entries(assessmentToDisplay.responses).map(
+                          ([key, value]) => (
+                            <div
+                              key={key}
+                              className="pb-3 border-b border-border last:border-0 last:pb-0"
+                            >
+                              <p className="text-xs font-medium text-muted-foreground mb-1">
+                                {key
+                                  .replace(/_/g, " ")
+                                  .replace(/\b\w/g, (l) => l.toUpperCase())}
+                              </p>
+                              <p className="text-sm text-foreground">
+                                {typeof value === "boolean"
+                                  ? value
+                                    ? "Yes"
+                                    : "No"
+                                  : typeof value === "number"
+                                    ? `${value}/10`
+                                    : value?.toString() || "Not answered"}
+                              </p>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
             </CardContent>
           </Card>
 
