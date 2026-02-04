@@ -1,75 +1,100 @@
-"use client"
+"use client";
 
-import { use, useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Textarea } from "@/components/ui/textarea"
-import { Progress } from "@/components/ui/progress"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { ASSESSMENT_CATEGORIES, getCategoryById, type Question } from "@/lib/assessment-data"
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react"
-import { useLanguage } from "@/lib/language-context"
-import { getAssessmentTranslation } from "@/lib/assessment-translations"
+import { use, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  ASSESSMENT_CATEGORIES,
+  getCategoryById,
+  type Question,
+} from "@/lib/assessment-data";
+import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
+import { getAssessmentTranslation } from "@/lib/assessment-translations";
+import { useAssessmentContext } from "@/lib/assessment-context";
+import {
+  useSaveAssessmentAnswers,
+  useAssessment,
+} from "@/hooks/use-assessments";
+import { useApiToast } from "@/hooks/use-api-toast";
 
 interface PageProps {
-  params: Promise<{ category: string }>
+  params: Promise<{ category: string }>;
 }
 
 export default function CategoryAssessmentPage({ params }: PageProps) {
-  const resolvedParams = use(params)
-  const router = useRouter()
-  const [mounted, setMounted] = useState(false)
-  const { language, t } = useLanguage()
+  const resolvedParams = use(params);
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { language, t } = useLanguage();
+  const { assessmentId } = useAssessmentContext();
+  const { data: assessment } = useAssessment(assessmentId);
+  const { saveAnswers } = useSaveAssessmentAnswers();
+  const { handleError, showSuccess } = useApiToast();
 
-  const category = getCategoryById(resolvedParams.category)
-  const categoryIndex = ASSESSMENT_CATEGORIES.findIndex((c) => c.id === resolvedParams.category)
+  const category = getCategoryById(resolvedParams.category);
+  const categoryIndex = ASSESSMENT_CATEGORIES.findIndex(
+    (c) => c.id === resolvedParams.category,
+  );
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   const schema = z.object(
     category?.subcategories.reduce(
       (acc, subcategory) => {
         subcategory.questions.forEach((question) => {
           if (question.type === "rating") {
-            acc[question.id] = z.number().min(0).max(10)
+            acc[question.id] = z.number().min(0).max(10);
           } else if (question.type === "boolean") {
-            acc[question.id] = z.boolean()
+            acc[question.id] = z.boolean();
           } else if (question.type === "text") {
-            acc[question.id] = z.string().min(1, "This field is required")
+            acc[question.id] = z.string().min(1, "This field is required");
           } else {
-            acc[question.id] = z.string().min(1, "Please select an option")
+            acc[question.id] = z.string().min(1, "Please select an option");
           }
-        })
-        return acc
+        });
+        return acc;
       },
       {} as Record<string, any>,
     ) || {},
-  )
+  );
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {},
-  })
+  });
 
   useEffect(() => {
-    if (mounted) {
-      const saved = localStorage.getItem("tbrac_responses")
-      if (saved) {
-        const responses = JSON.parse(saved)
-        form.reset(responses)
-      }
+    if (mounted && assessment?.responses) {
+      form.reset(assessment.responses);
     }
-  }, [mounted, form])
+  }, [mounted, assessment, form]);
 
   if (!category) {
     return (
@@ -78,42 +103,77 @@ export default function CategoryAssessmentPage({ params }: PageProps) {
         <div className="container mx-auto px-4 py-12">
           <Card>
             <CardContent className="p-12 text-center">
-              <h2 className="text-2xl font-bold mb-4">{t("categoryNotFound")}</h2>
-              <Button onClick={() => router.push("/assessment/start")}>{t("returnToStart")}</Button>
+              <h2 className="text-2xl font-bold mb-4">
+                {t("categoryNotFound")}
+              </h2>
+              <Button onClick={() => router.push("/assessment/start")}>
+                {t("returnToStart")}
+              </Button>
             </CardContent>
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
-  function onSubmit(data: any) {
-    const existing = localStorage.getItem("tbrac_responses")
-    const allResponses = existing ? JSON.parse(existing) : {}
-    Object.assign(allResponses, data)
-    localStorage.setItem("tbrac_responses", JSON.stringify(allResponses))
+  async function onSubmit(data: any) {
+    if (!assessmentId) {
+      handleError(
+        new Error("No assessment ID found. Please start the assessment again."),
+      );
+      router.push("/assessment/start");
+      return;
+    }
 
-    if (categoryIndex < ASSESSMENT_CATEGORIES.length - 1) {
-      const nextCategory = ASSESSMENT_CATEGORIES[categoryIndex + 1]
-      router.push(`/assessment/${nextCategory.id}`)
-    } else {
-      router.push("/assessment/results")
+    setIsSaving(true);
+
+    try {
+      const progressPercentage = Math.round(
+        ((categoryIndex + 1) / ASSESSMENT_CATEGORIES.length) * 100,
+      );
+
+      await saveAnswers(assessmentId, {
+        responses: data,
+        category: category.id,
+        progress_percentage: progressPercentage,
+      });
+
+      if (categoryIndex < ASSESSMENT_CATEGORIES.length - 1) {
+        const nextCategory = ASSESSMENT_CATEGORIES[categoryIndex + 1];
+        router.push(`/assessment/${nextCategory.id}`);
+      } else {
+        router.push("/assessment/results");
+      }
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setIsSaving(false);
     }
   }
 
   function handlePrevious() {
     if (categoryIndex > 0) {
-      const prevCategory = ASSESSMENT_CATEGORIES[categoryIndex - 1]
-      router.push(`/assessment/${prevCategory.id}`)
+      const prevCategory = ASSESSMENT_CATEGORIES[categoryIndex - 1];
+      router.push(`/assessment/${prevCategory.id}`);
     } else {
-      router.push("/assessment/start")
+      router.push("/assessment/start");
     }
   }
 
-  const progress = ((categoryIndex + 1) / ASSESSMENT_CATEGORIES.length) * 100
+  const progress = ((categoryIndex + 1) / ASSESSMENT_CATEGORIES.length) * 100;
 
-  const translatedCategoryName = getAssessmentTranslation(language, "categories", category.id, "name")
-  const translatedCategoryDesc = getAssessmentTranslation(language, "categories", category.id, "description")
+  const translatedCategoryName = getAssessmentTranslation(
+    language,
+    "categories",
+    category.id,
+    "name",
+  );
+  const translatedCategoryDesc = getAssessmentTranslation(
+    language,
+    "categories",
+    category.id,
+    "description",
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -123,7 +183,8 @@ export default function CategoryAssessmentPage({ params }: PageProps) {
         <div className="max-w-4xl mx-auto mb-8 space-y-2">
           <div className="flex justify-between text-sm text-muted-foreground">
             <span>
-              {t("category")} {categoryIndex + 1} {t("of")} {ASSESSMENT_CATEGORIES.length}
+              {t("category")} {categoryIndex + 1} {t("of")}{" "}
+              {ASSESSMENT_CATEGORIES.length}
             </span>
             <span>
               {Math.round(progress)}% {t("complete")}
@@ -139,58 +200,88 @@ export default function CategoryAssessmentPage({ params }: PageProps) {
                 <CheckCircle2 className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">{translatedCategoryName}</h1>
-                <p className="text-muted-foreground">{translatedCategoryDesc}</p>
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                  {translatedCategoryName}
+                </h1>
+                <p className="text-muted-foreground">
+                  {translatedCategoryDesc}
+                </p>
               </div>
             </div>
           </div>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <Accordion type="multiple" defaultValue={category.subcategories.map((s) => s.id)} className="space-y-4">
+              <Accordion
+                type="multiple"
+                defaultValue={category.subcategories.map((s) => s.id)}
+                className="space-y-4"
+              >
                 {category.subcategories.map((subcategory) => {
                   const translatedSubcatName = getAssessmentTranslation(
                     language,
                     "categories",
                     category.id,
                     `subcategories.${subcategory.id}.name`,
-                  )
+                  );
                   const translatedSubcatDesc = getAssessmentTranslation(
                     language,
                     "categories",
                     category.id,
                     `subcategories.${subcategory.id}.description`,
-                  )
+                  );
 
                   return (
-                    <AccordionItem key={subcategory.id} value={subcategory.id} className="border-border">
+                    <AccordionItem
+                      key={subcategory.id}
+                      value={subcategory.id}
+                      className="border-border"
+                    >
                       <Card>
                         <AccordionTrigger className="px-6 py-4 hover:no-underline">
                           <div className="text-left">
-                            <h3 className="text-lg font-semibold text-foreground">{translatedSubcatName}</h3>
-                            <p className="text-sm text-muted-foreground mt-1">{translatedSubcatDesc}</p>
+                            <h3 className="text-lg font-semibold text-foreground">
+                              {translatedSubcatName}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {translatedSubcatDesc}
+                            </p>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent>
                           <CardContent className="space-y-6 pt-4">
                             {subcategory.questions.map((question) => (
-                              <QuestionRenderer key={question.id} question={question} form={form} language={language} />
+                              <QuestionRenderer
+                                key={question.id}
+                                question={question}
+                                form={form}
+                                language={language}
+                              />
                             ))}
                           </CardContent>
                         </AccordionContent>
                       </Card>
                     </AccordionItem>
-                  )
+                  );
                 })}
               </Accordion>
 
               <div className="flex gap-4 pt-6">
-                <Button type="button" variant="outline" onClick={handlePrevious} className="flex-1 bg-transparent">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handlePrevious}
+                  className="flex-1 bg-transparent"
+                >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   {t("previous")}
                 </Button>
-                <Button type="submit" className="flex-1">
-                  {categoryIndex < ASSESSMENT_CATEGORIES.length - 1 ? t("nextCategory") : t("viewResults")}
+                <Button type="submit" className="flex-1" disabled={isSaving}>
+                  {isSaving
+                    ? "Saving..."
+                    : categoryIndex < ASSESSMENT_CATEGORIES.length - 1
+                      ? t("nextCategory")
+                      : t("viewResults")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -199,12 +290,24 @@ export default function CategoryAssessmentPage({ params }: PageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-function QuestionRenderer({ question, form, language }: { question: Question; form: any; language: "en" | "zh" }) {
-  const translatedQuestion = getAssessmentTranslation(language, "questions", question.id)
-  const { t } = useLanguage()
+function QuestionRenderer({
+  question,
+  form,
+  language,
+}: {
+  question: Question;
+  form: any;
+  language: "en" | "zh";
+}) {
+  const translatedQuestion = getAssessmentTranslation(
+    language,
+    "questions",
+    question.id,
+  );
+  const { t } = useLanguage();
 
   if (question.type === "rating") {
     return (
@@ -228,7 +331,9 @@ function QuestionRenderer({ question, form, language }: { question: Question; fo
                 />
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>0</span>
-                  <span className="font-semibold text-foreground">{field.value || 0}</span>
+                  <span className="font-semibold text-foreground">
+                    {field.value || 0}
+                  </span>
                   <span>10</span>
                 </div>
               </div>
@@ -237,7 +342,7 @@ function QuestionRenderer({ question, form, language }: { question: Question; fo
           </FormItem>
         )}
       />
-    )
+    );
   }
 
   if (question.type === "boolean") {
@@ -251,18 +356,30 @@ function QuestionRenderer({ question, form, language }: { question: Question; fo
             <FormControl>
               <RadioGroup
                 onValueChange={(value) => field.onChange(value === "true")}
-                value={field.value === undefined ? undefined : field.value ? "true" : "false"}
+                value={
+                  field.value === undefined
+                    ? undefined
+                    : field.value
+                      ? "true"
+                      : "false"
+                }
                 className="flex gap-4"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="true" id={`${question.id}-yes`} />
-                  <label htmlFor={`${question.id}-yes`} className="text-sm font-medium cursor-pointer">
+                  <label
+                    htmlFor={`${question.id}-yes`}
+                    className="text-sm font-medium cursor-pointer"
+                  >
                     {t("yes")}
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="false" id={`${question.id}-no`} />
-                  <label htmlFor={`${question.id}-no`} className="text-sm font-medium cursor-pointer">
+                  <label
+                    htmlFor={`${question.id}-no`}
+                    className="text-sm font-medium cursor-pointer"
+                  >
                     {t("no")}
                   </label>
                 </div>
@@ -272,7 +389,7 @@ function QuestionRenderer({ question, form, language }: { question: Question; fo
           </FormItem>
         )}
       />
-    )
+    );
   }
 
   if (question.type === "multipleChoice" && question.options) {
@@ -284,18 +401,32 @@ function QuestionRenderer({ question, form, language }: { question: Question; fo
           <FormItem className="space-y-3">
             <FormLabel>{translatedQuestion}</FormLabel>
             <FormControl>
-              <RadioGroup onValueChange={field.onChange} value={field.value} className="space-y-2">
+              <RadioGroup
+                onValueChange={field.onChange}
+                value={field.value}
+                className="space-y-2"
+              >
                 {question.options.map((option, index) => {
-                  const translatedOption = getAssessmentTranslation(language, "options", option)
+                  const translatedOption = getAssessmentTranslation(
+                    language,
+                    "options",
+                    option,
+                  );
 
                   return (
                     <div key={index} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={`${question.id}-${index}`} />
-                      <label htmlFor={`${question.id}-${index}`} className="text-sm font-medium cursor-pointer">
+                      <RadioGroupItem
+                        value={option}
+                        id={`${question.id}-${index}`}
+                      />
+                      <label
+                        htmlFor={`${question.id}-${index}`}
+                        className="text-sm font-medium cursor-pointer"
+                      >
                         {translatedOption}
                       </label>
                     </div>
-                  )
+                  );
                 })}
               </RadioGroup>
             </FormControl>
@@ -303,7 +434,7 @@ function QuestionRenderer({ question, form, language }: { question: Question; fo
           </FormItem>
         )}
       />
-    )
+    );
   }
 
   if (question.type === "text") {
@@ -315,14 +446,18 @@ function QuestionRenderer({ question, form, language }: { question: Question; fo
           <FormItem>
             <FormLabel>{translatedQuestion}</FormLabel>
             <FormControl>
-              <Textarea placeholder={t("enterAnswer")} className="min-h-[80px]" {...field} />
+              <Textarea
+                placeholder={t("enterAnswer")}
+                className="min-h-[80px]"
+                {...field}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
-    )
+    );
   }
 
-  return null
+  return null;
 }
