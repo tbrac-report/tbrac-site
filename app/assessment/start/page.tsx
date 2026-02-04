@@ -465,6 +465,8 @@ export default function AssessmentStartPage() {
         open={showAuthDialog}
         onOpenChange={setShowAuthDialog}
         onSuccess={handleAuthSuccess}
+        prefilledEmail={pendingSubmission?.contactEmail || ""}
+        prefilledName={pendingSubmission?.contactName || ""}
       />
     </div>
   );

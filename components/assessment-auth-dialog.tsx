@@ -20,19 +20,29 @@ interface AssessmentAuthDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  prefilledEmail?: string;
+  prefilledName?: string;
 }
 
 export function AssessmentAuthDialog({
   open,
   onOpenChange,
   onSuccess,
+  prefilledEmail = "",
+  prefilledName = "",
 }: AssessmentAuthDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(prefilledEmail);
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [name, setName] = useState(prefilledName);
   const { signIn, signUp } = useAuth();
   const { handleError, showSuccess } = useApiToast();
+
+  // Update email/name when props change
+  useState(() => {
+    if (prefilledEmail) setEmail(prefilledEmail);
+    if (prefilledName) setName(prefilledName);
+  });
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +65,9 @@ export function AssessmentAuthDialog({
 
     try {
       await signUp(email, password);
-      showSuccess("Account created successfully! Please check your email to verify.");
+      showSuccess(
+        "Account created successfully! Please check your email to verify.",
+      );
       onSuccess();
     } catch (err) {
       handleError(err);
@@ -68,16 +80,16 @@ export function AssessmentAuthDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Sign in to continue</DialogTitle>
+          <DialogTitle>Create your account</DialogTitle>
           <DialogDescription>
-            Create an account or sign in to start your assessment
+            Quick sign up to save your assessment progress
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="signin" className="w-full">
+        <Tabs defaultValue="signup" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsTrigger value="signup">Create Account</TabsTrigger>
+            <TabsTrigger value="signin">Already have account?</TabsTrigger>
           </TabsList>
 
           <TabsContent value="signin" className="space-y-4">
