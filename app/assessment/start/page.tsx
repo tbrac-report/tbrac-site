@@ -36,6 +36,7 @@ import { useLanguage } from "@/lib/language-context";
 import { useCreateAssessment } from "@/hooks/use-assessments";
 import { useAssessmentContext } from "@/lib/assessment-context";
 import { useApiToast } from "@/hooks/use-api-toast";
+import { useAuth } from "@/lib/auth-context";
 import type { CompanyInfo as APICompanyInfo } from "@/lib/api-types";
 
 export default function AssessmentStartPage() {
@@ -45,6 +46,7 @@ export default function AssessmentStartPage() {
   const { create } = useCreateAssessment();
   const { setAssessmentId, setCurrentAssessment } = useAssessmentContext();
   const { handleError, showSuccess } = useApiToast();
+  const { user, isAuthenticated } = useAuth();
 
   const form = useForm<CompanyInfo>({
     resolver: zodResolver(companyInfoSchema),
@@ -62,6 +64,13 @@ export default function AssessmentStartPage() {
     setIsSubmitting(true);
 
     try {
+      // Check if user is authenticated
+      if (!isAuthenticated || !user) {
+        handleError(new Error("Please sign in to start an assessment"));
+        router.push("/evaluator-login");
+        return;
+      }
+
       // Map form data to API format
       const companyInfo: APICompanyInfo = {
         company_name: data.companyName,
@@ -72,10 +81,9 @@ export default function AssessmentStartPage() {
         contact_email: data.contactEmail,
       };
 
-      // Create assessment via API
-      // TODO: In production, get real customer_id from auth context or customer selection
+      // Create assessment via API using authenticated user's ID
       const assessment = await create({
-        customer_id: "00000000-0000-0000-0000-000000000000", // Placeholder for testing
+        customer_id: user.id, // Use Supabase user ID as customer_id
         company_info: companyInfo,
       });
 
