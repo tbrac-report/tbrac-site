@@ -67,16 +67,12 @@ export default function CompanyProfilePage() {
 
   // Get customer ID from assessment
   useEffect(() => {
-    console.log("Assessment data:", assessment);
-    console.log("Current assessment:", currentAssessment);
     if (assessment?.customer_id) {
-      console.log(
         "Setting customer ID from assessment:",
         assessment.customer_id,
       );
       setCustomerId(assessment.customer_id);
     } else if (currentAssessment?.customer_id) {
-      console.log(
         "Setting customer ID from currentAssessment:",
         currentAssessment.customer_id,
       );
@@ -86,9 +82,6 @@ export default function CompanyProfilePage() {
 
   // Debug: Log documents data
   useEffect(() => {
-    console.log("Customer ID:", customerId);
-    console.log("Documents data:", documentsData);
-    console.log("Documents loading:", documentsLoading);
   }, [customerId, documentsData, documentsLoading]);
 
   // Redirect if not authenticated
@@ -170,13 +163,6 @@ export default function CompanyProfilePage() {
   const status = assessmentToDisplay?.status || "in_progress";
   const companyInfo = assessmentToDisplay?.company_info;
 
-  console.log("=== PROFILE PAGE RENDER ===");
-  console.log("Assessment to display:", assessmentToDisplay);
-  console.log("Status:", status);
-  console.log("Progress:", progress);
-  console.log("Responses:", assessmentToDisplay?.responses);
-  console.log("Has responses:", !!assessmentToDisplay?.responses);
-  console.log(
     "Response keys:",
     assessmentToDisplay?.responses
       ? Object.keys(assessmentToDisplay.responses)
