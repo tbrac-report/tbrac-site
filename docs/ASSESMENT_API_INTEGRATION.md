@@ -11,6 +11,68 @@ Update your frontend API base URL:
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
 ```
 
+## Prerequisites: Customer Creation
+
+**IMPORTANT:** Before creating an assessment, you must create a customer first. This should happen after user login.
+
+### Create Customer
+**POST** `/api/v1/customers`
+
+**Headers:**
+```
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "name": "ByteDance Ltd.",
+  "chinese_name": "字节跳动",
+  "industry_sector": "TECHNOLOGY",
+  "ownership_type": "PRIVATE",
+  "state_ownership_percentage": 0.00,
+  "headquarters_country": "China",
+  "headquarters_city": "Beijing",
+  "us_presence": "TikTok operations in US",
+  "us_subsidiary_name": "TikTok Inc.",
+  "parent_company_id": null,
+  "website": "https://www.bytedance.com",
+  "notes": "Social media and technology company"
+}
+```
+
+**Required Fields:**
+- `name` - Company name
+- `industry_sector` - One of: `TECHNOLOGY`, `TELECOMMUNICATIONS`, `SEMICONDUCTORS`, `DEFENSE`, `HEALTHCARE`, `FINANCIAL_SERVICES`, `ENERGY`, `MANUFACTURING`, `CONSUMER_GOODS`, `RETAIL`, `AGRICULTURE`, `OTHER`
+- `ownership_type` - One of: `PRIVATE`, `STATE_OWNED`, `MIXED`, `PUBLIC_LISTED`, `JOINT_VENTURE`
+- `state_ownership_percentage` - Decimal 0.00 to 100.00
+- `headquarters_country` - Country name
+
+**Response (201):**
+```json
+{
+  "id": "customer-uuid",
+  "name": "ByteDance Ltd.",
+  "chinese_name": "字节跳动",
+  "industry_sector": "TECHNOLOGY",
+  "ownership_type": "PRIVATE",
+  "state_ownership_percentage": 0.00,
+  "headquarters_country": "China",
+  "headquarters_city": "Beijing",
+  "us_presence": "TikTok operations in US",
+  "us_subsidiary_name": "TikTok Inc.",
+  "parent_company_id": null,
+  "website": "https://www.bytedance.com",
+  "notes": "Social media and technology company",
+  "created_at": "2024-01-15T10:00:00Z",
+  "updated_at": "2024-01-15T10:00:00Z",
+  "created_by": "user-uuid"
+}
+```
+
+**Use the returned `customer.id` for all subsequent assessment operations.**
+
 ## API Endpoints
 
 ### 1. Create Assessment
@@ -196,6 +258,45 @@ Authorization: Bearer <token>
 
 ## Integration Steps
 
+### Step 0: Create Customer After Login
+
+After user logs in, create a customer record:
+
+```typescript
+const createCustomer = async (token: string, customerData: {
+  name: string
+  industry_sector: string
+  ownership_type: string
+  state_ownership_percentage: number
+  headquarters_country: string
+  headquarters_city?: string
+  chinese_name?: string
+  us_presence?: string
+  us_subsidiary_name?: string
+  website?: string
+  notes?: string
+}) => {
+  const response = await fetch(`${API_BASE_URL}/api/v1/customers`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(customerData)
+  })
+  const customer = await response.json()
+  // Store customer.id in your app state/context
+  // Use this customer_id when creating assessments
+  return customer
+}
+```
+
+**When to call this:**
+- After successful login/signup
+- Before user starts their first assessment
+- Can show a "Company Setup" form to collect this data
+- Store `customer.id` in app state for reuse
+
 ### Step 1: Remove localStorage Logic
 
 **Before:**
@@ -377,6 +478,9 @@ try {
 
 ## Migration Checklist
 
+- [ ] Add customer creation flow after login/signup
+- [ ] Create form to collect customer data (name, industry, ownership type, etc.)
+- [ ] Store customer ID in app state/context after creation
 - [ ] Remove all localStorage calls for assessment data
 - [ ] Add API client/service for assessment endpoints
 - [ ] Call create assessment when user starts

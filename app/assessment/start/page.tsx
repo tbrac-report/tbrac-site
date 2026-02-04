@@ -37,12 +37,16 @@ import { useCreateAssessment } from "@/hooks/use-assessments";
 import { useAssessmentContext } from "@/lib/assessment-context";
 import { useApiToast } from "@/hooks/use-api-toast";
 import { useAuth } from "@/lib/auth-context";
+import { AssessmentAuthDialog } from "@/components/assessment-auth-dialog";
 import type { CompanyInfo as APICompanyInfo } from "@/lib/api-types";
 
 export default function AssessmentStartPage() {
   const { language, t } = useLanguage();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [pendingSubmission, setPendingSubmission] =
+    useState<CompanyInfo | null>(null);
   const { create } = useCreateAssessment();
   const { setAssessmentId, setCurrentAssessment } = useAssessmentContext();
   const { handleError, showSuccess } = useApiToast();
@@ -60,14 +64,12 @@ export default function AssessmentStartPage() {
     },
   });
 
-  async function onSubmit(data: CompanyInfo) {
+  async function createAssessmentWithAuth(data: CompanyInfo) {
     setIsSubmitting(true);
 
     try {
-      // Check if user is authenticated
-      if (!isAuthenticated || !user) {
-        handleError(new Error("Please sign in to start an assessment"));
-        router.push("/evaluator-login");
+      if (!user) {
+        handleError(new Error("Please sign in to continue"));
         return;
       }
 
@@ -83,7 +85,7 @@ export default function AssessmentStartPage() {
 
       // Create assessment via API using authenticated user's ID
       const assessment = await create({
-        customer_id: user.id, // Use Supabase user ID as customer_id
+        customer_id: user.id,
         company_info: companyInfo,
       });
 
@@ -97,6 +99,28 @@ export default function AssessmentStartPage() {
       handleError(err);
     } finally {
       setIsSubmitting(false);
+      setPendingSubmission(null);
+    }
+  }
+
+  async function onSubmit(data: CompanyInfo) {
+    // Check if user is authenticated
+    if (!isAuthenticated || !user) {
+      // Store form data and show auth dialog
+      setPendingSubmission(data);
+      setShowAuthDialog(true);
+      return;
+    }
+
+    // User is authenticated, proceed
+    await createAssessmentWithAuth(data);
+  }
+
+  function handleAuthSuccess() {
+    setShowAuthDialog(false);
+    // After successful auth, create assessment with pending data
+    if (pendingSubmission) {
+      createAssessmentWithAuth(pendingSubmission);
     }
   }
 
@@ -400,6 +424,13 @@ export default function AssessmentStartPage() {
           </Card>
         </div>
       </div>
+
+      {/* Authentication Dialog */}
+      <AssessmentAuthDialog
+        open={showAuthDialog}
+        onOpenChange={setShowAuthDialog}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 }
