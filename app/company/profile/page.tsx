@@ -303,32 +303,41 @@ export default function CompanyProfilePage() {
                         Responses
                       </Badge>
                     </div>
-                    <div className="rounded-lg border border-border bg-muted/30 p-4 max-h-96 overflow-y-auto">
-                      <div className="space-y-3">
-                        {Object.entries(assessmentToDisplay.responses).map(
-                          ([key, value]) => (
-                            <div
-                              key={key}
-                              className="pb-3 border-b border-border last:border-0 last:pb-0"
-                            >
-                              <p className="text-xs font-medium text-muted-foreground mb-1">
-                                {key
-                                  .replace(/_/g, " ")
-                                  .replace(/\b\w/g, (l) => l.toUpperCase())}
-                              </p>
-                              <p className="text-sm text-foreground">
-                                {typeof value === "boolean"
-                                  ? value
-                                    ? "Yes"
-                                    : "No"
-                                  : typeof value === "number"
-                                    ? `${value}/10`
-                                    : value?.toString() || "Not answered"}
-                              </p>
-                            </div>
-                          ),
-                        )}
-                      </div>
+                    <div className="rounded-lg border border-border overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-[40%]">Question</TableHead>
+                            <TableHead>Response</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {Object.entries(assessmentToDisplay.responses).map(
+                            ([key, value]) => (
+                              <TableRow key={key}>
+                                <TableCell className="font-medium text-xs">
+                                  {key
+                                    .replace(/_/g, " ")
+                                    .replace(/\b\w/g, (l) => l.toUpperCase())}
+                                </TableCell>
+                                <TableCell>
+                                  {typeof value === "boolean" ? (
+                                    <Badge variant={value ? "default" : "secondary"}>
+                                      {value ? "Yes" : "No"}
+                                    </Badge>
+                                  ) : typeof value === "number" ? (
+                                    <Badge variant="outline">{value}/10</Badge>
+                                  ) : (
+                                    <span className="text-sm">
+                                      {value?.toString() || "Not answered"}
+                                    </span>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            ),
+                          )}
+                        </TableBody>
+                      </Table>
                     </div>
                   </div>
                 )}
