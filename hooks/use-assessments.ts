@@ -4,7 +4,9 @@ import type {
   Assessment,
   AssessmentListItem,
   AssessmentCreate,
-  SaveAnswersRequest,
+  AssessmentModule,
+  AssessmentModuleSummary,
+  SaveModuleAnswersRequest,
   PaginatedResponse,
 } from "@/lib/api-types";
 
@@ -15,14 +17,11 @@ export function useCreateAssessment() {
   const create = async (data: AssessmentCreate): Promise<Assessment | null> => {
     setLoading(true);
     setError(null);
-
     try {
       const result = await api.assessments.create(data);
       return result;
     } catch (err) {
-      setError(
-        err instanceof APIError ? err.message : "Failed to create assessment",
-      );
+      setError(err instanceof APIError ? err.message : "Failed to create assessment");
       throw err;
     } finally {
       setLoading(false);
@@ -39,51 +38,21 @@ export function useAssessment(id: string | null) {
 
   const load = useCallback(async () => {
     if (!id) return;
-
     setLoading(true);
     setError(null);
     try {
       const result = await api.assessments.get(id);
       setData(result);
     } catch (err) {
-      setError(
-        err instanceof APIError ? err.message : "Failed to load assessment",
-      );
+      setError(err instanceof APIError ? err.message : "Failed to load assessment");
     } finally {
       setLoading(false);
     }
   }, [id]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
   return { data, loading, error, refetch: load };
-}
-
-export function useSaveAssessmentAnswers() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const saveAnswers = async (
-    assessmentId: string,
-    data: SaveAnswersRequest,
-  ): Promise<Assessment | null> => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await api.assessments.saveAnswers(assessmentId, data);
-      return result;
-    } catch (err) {
-      setError(err instanceof APIError ? err.message : "Failed to save answers");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { saveAnswers, loading, error };
 }
 
 export function useSubmitAssessment() {
@@ -93,14 +62,11 @@ export function useSubmitAssessment() {
   const submit = async (assessmentId: string): Promise<Assessment | null> => {
     setLoading(true);
     setError(null);
-
     try {
       const result = await api.assessments.submit(assessmentId);
       return result;
     } catch (err) {
-      setError(
-        err instanceof APIError ? err.message : "Failed to submit assessment",
-      );
+      setError(err instanceof APIError ? err.message : "Failed to submit assessment");
       throw err;
     } finally {
       setLoading(false);
@@ -114,15 +80,12 @@ export function useCustomerAssessments(
   customerId: string | null,
   params?: { page?: number; pageSize?: number; status?: string },
 ) {
-  const [data, setData] = useState<PaginatedResponse<AssessmentListItem> | null>(
-    null,
-  );
+  const [data, setData] = useState<PaginatedResponse<AssessmentListItem> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!customerId) return;
-
     setLoading(true);
     setError(null);
     try {
@@ -133,17 +96,65 @@ export function useCustomerAssessments(
       });
       setData(result);
     } catch (err) {
-      setError(
-        err instanceof APIError ? err.message : "Failed to load assessments",
-      );
+      setError(err instanceof APIError ? err.message : "Failed to load assessments");
     } finally {
       setLoading(false);
     }
   }, [customerId, params?.page, params?.pageSize, params?.status]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
   return { data, loading, error, refetch: load };
+}
+
+export function useAssessmentModule(
+  assessmentId: string | null,
+  moduleKey: string | null,
+) {
+  const [data, setData] = useState<AssessmentModule | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    if (!assessmentId || !moduleKey) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await api.assessments.getModule(assessmentId, moduleKey);
+      setData(result);
+    } catch (err) {
+      setError(err instanceof APIError ? err.message : "Failed to load module");
+    } finally {
+      setLoading(false);
+    }
+  }, [assessmentId, moduleKey]);
+
+  useEffect(() => { load(); }, [load]);
+
+  return { data, loading, error, refetch: load };
+}
+
+export function useSaveModuleAnswers() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const save = async (
+    assessmentId: string,
+    moduleKey: string,
+    data: SaveModuleAnswersRequest,
+  ): Promise<AssessmentModule | null> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await api.assessments.saveModuleAnswers(assessmentId, moduleKey, data);
+      return result;
+    } catch (err) {
+      setError(err instanceof APIError ? err.message : "Failed to save answers");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { save, loading, error };
 }

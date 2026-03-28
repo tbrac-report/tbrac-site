@@ -3,13 +3,14 @@
 import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
-import { Header } from "@/components/header";
+import { PortalHeader } from "@/components/portal-header";
 import {
   useCustomer,
   useUpdateCustomer,
   useDeleteCustomer,
 } from "@/hooks/use-customers";
 import { useCustomerDocuments } from "@/hooks/use-documents";
+import { useCustomerAssessments } from "@/hooks/use-assessments";
 import { useApiToast } from "@/hooks/use-api-toast";
 import {
   IndustrySector,
@@ -81,6 +82,8 @@ import {
   Globe,
   MapPin,
   Save,
+  ClipboardList,
+  Plus,
 } from "lucide-react";
 
 interface PageProps {
@@ -94,6 +97,10 @@ function CustomerDetailContent({ params }: PageProps) {
     resolvedParams.id,
   );
   const { data: documents } = useCustomerDocuments(resolvedParams.id, {
+    page: 1,
+    pageSize: 5,
+  });
+  const { data: assessments } = useCustomerAssessments(resolvedParams.id, {
     page: 1,
     pageSize: 5,
   });
@@ -206,7 +213,7 @@ function CustomerDetailContent({ params }: PageProps) {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
+        <PortalHeader />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="max-w-5xl mx-auto space-y-6">
             <Skeleton className="h-8 w-[200px]" />
@@ -229,7 +236,7 @@ function CustomerDetailContent({ params }: PageProps) {
   if (error || !customer) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
+        <PortalHeader />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="max-w-5xl mx-auto">
             <div className="text-center py-12">
@@ -252,7 +259,7 @@ function CustomerDetailContent({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <PortalHeader />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Page Header */}
@@ -506,6 +513,103 @@ function CustomerDetailContent({ params }: PageProps) {
                     }
                   >
                     Upload Documents
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Assessments */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <ClipboardList className="h-5 w-5" />
+                  Assessments
+                  {assessments && assessments.total > 0 && (
+                    <Badge variant="secondary" className="ml-1">
+                      {assessments.total}
+                    </Badge>
+                  )}
+                </CardTitle>
+                <Button
+                  size="sm"
+                  onClick={() =>
+                    router.push(
+                      `/customers/${resolvedParams.id}/assessments/new`,
+                    )
+                  }
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  New Assessment
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {assessments && assessments.items.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Modules</TableHead>
+                      <TableHead>Created</TableHead>
+                      <TableHead>Submitted</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {assessments.items.map((a) => (
+                      <TableRow
+                        key={a.id}
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() =>
+                          router.push(
+                            `/customers/${resolvedParams.id}/assessments/${a.id}`,
+                          )
+                        }
+                      >
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={
+                              a.status === "submitted"
+                                ? "bg-green-50 text-green-700 border-green-200"
+                                : a.status === "completed"
+                                  ? "bg-blue-50 text-blue-700 border-blue-200"
+                                  : "bg-yellow-50 text-yellow-700 border-yellow-200"
+                            }
+                          >
+                            {a.status.replace("_", " ")}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {a.modules_completed}/10 modules
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {formatDate(a.created_at)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {a.submitted_at ? formatDate(a.submitted_at) : "—"}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <ClipboardList className="mx-auto h-8 w-8 mb-2" />
+                  <p>No assessments yet</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-3"
+                    onClick={() =>
+                      router.push(
+                        `/customers/${resolvedParams.id}/assessments/new`,
+                      )
+                    }
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Start Assessment
                   </Button>
                 </div>
               )}

@@ -139,25 +139,35 @@ export interface PaginatedResponse<T> {
 }
 
 // Assessment types
-export interface CompanyInfo {
-  company_name: string;
-  country: string;
-  industry: string;
-  company_size: string;
-  contact_name: string;
-  contact_email: string;
+export type AssessmentStatus = "in_progress" | "completed" | "submitted";
+export type ModuleStatus = "not_started" | "in_progress" | "completed";
+export type RiskTier = "Low" | "Medium" | "High" | "Very High";
+
+export interface AssessmentModuleSummary {
+  id: string;
+  assessment_id: string;
+  module_number: number;
+  module_key: string;
+  status: ModuleStatus;
+  score: number | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
-export type AssessmentStatus = "in_progress" | "completed" | "submitted";
+export interface AssessmentModule extends AssessmentModuleSummary {
+  responses: Record<string, number>;
+  analyst_notes: string | null;
+}
 
 export interface Assessment {
   id: string;
   customer_id: string;
   status: AssessmentStatus;
-  progress_percentage: number;
-  company_info: CompanyInfo;
-  responses: Record<string, any>;
-  last_category_viewed: string | null;
+  total_score: number | null;
+  risk_tier: RiskTier | null;
+  version: number;
+  modules: AssessmentModuleSummary[];
   submitted_at: string | null;
   created_at: string;
   updated_at: string;
@@ -167,8 +177,10 @@ export interface AssessmentListItem {
   id: string;
   customer_id: string;
   status: AssessmentStatus;
-  progress_percentage: number;
-  company_name: string;
+  total_score: number | null;
+  risk_tier: RiskTier | null;
+  version: number;
+  modules_completed: number;
   submitted_at: string | null;
   created_at: string;
   updated_at: string;
@@ -176,11 +188,10 @@ export interface AssessmentListItem {
 
 export interface AssessmentCreate {
   customer_id: string;
-  company_info: CompanyInfo;
 }
 
-export interface SaveAnswersRequest {
-  responses: Record<string, any>;
-  category?: string;
-  progress_percentage?: number;
+export interface SaveModuleAnswersRequest {
+  responses: Record<string, number>;
+  complete: boolean;
+  analyst_notes?: string;
 }

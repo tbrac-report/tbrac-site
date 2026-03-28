@@ -12,7 +12,9 @@ import type {
   Assessment,
   AssessmentListItem,
   AssessmentCreate,
-  SaveAnswersRequest,
+  AssessmentModule,
+  AssessmentModuleSummary,
+  SaveModuleAnswersRequest,
 } from "./api-types";
 
 const API_BASE_URL =
@@ -29,7 +31,7 @@ export class APIError extends Error {
   }
 }
 
-async function getAuthHeaders(): Promise<HeadersInit> {
+async function getAuthHeaders(): Promise<Record<string, string>> {
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -72,7 +74,10 @@ async function apiRequest<T>(
       return undefined as T;
     }
 
-    return await response.json();
+    const data = await response.json().catch(() => {
+      throw new APIError("Invalid response from server", response.status);
+    });
+    return data;
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
@@ -237,12 +242,6 @@ export const api = {
     get: (id: string) =>
       authenticatedRequest<Assessment>(`/api/v1/assessments/${id}`),
 
-    saveAnswers: (id: string, data: SaveAnswersRequest) =>
-      authenticatedRequest<Assessment>(`/api/v1/assessments/${id}/answers`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      }),
-
     submit: (id: string) =>
       authenticatedRequest<Assessment>(`/api/v1/assessments/${id}/submit`, {
         method: "POST",
@@ -265,6 +264,53 @@ export const api = {
       const query = searchParams.toString();
       return authenticatedRequest<PaginatedResponse<AssessmentListItem>>(
         `/api/v1/customers/${customerId}/assessments${query ? `?${query}` : ""}`,
+      );
+    },
+
+    listModules: (assessmentId: string) =>
+      authenticatedRequest<AssessmentModuleSummary[]>(
+        `/api/v1/assessments/${assessmentId}/modules`,
+      ),
+
+    getModule: (assessmentId: string, moduleKey: string) =>
+      authenticatedRequest<AssessmentModule>(
+        `/api/v1/assessments/${assessmentId}/modules/${moduleKey}`,
+      ),
+
+    saveModuleAnswers: (
+      assessmentId: string,
+      moduleKey: string,
+      data: SaveModuleAnswersRequest,
+    ) =>
+      authenticatedRequest<AssessmentModule>(
+        `/api/v1/assessments/${assessmentId}/modules/${moduleKey}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(data),
+        },
+      ),
+  },
+
+  // Document upload with optional module association
+  moduleDocuments: {
+    upload: async (
+      customerId: string,
+      files: File[],
+      assessmentModuleId?: string,
+    ) => {
+      const authHeaders = await getAuthHeaders();
+      const formData = new FormData();
+      files.forEach((file) => formData.append("files", file));
+      if (assessmentModuleId) {
+        formData.append("assessment_module_id", assessmentModuleId);
+      }
+      return apiRequest<DocumentUploadResponse[]>(
+        `/api/v1/customers/${customerId}/documents`,
+        {
+          method: "POST",
+          headers: { Authorization: (authHeaders as Record<string, string>).Authorization },
+          body: formData,
+        },
       );
     },
   },

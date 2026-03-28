@@ -1,12 +1,25 @@
-import type { AssessmentResult } from "./scoring"
-import type { CompanyInfo, AssessmentResponses } from "./assessment-schema"
-
 export type SubmissionStatus = "pending_review" | "under_review" | "approved" | "changes_requested" | "completed"
+
+export interface AssessmentResult {
+  overallScore: number
+  overallRiskLevel: "low" | "medium" | "high" | "critical"
+  categoryScores: Array<{
+    categoryId: string
+    categoryName: string
+    score: number
+    maxScore: number
+    riskLevel: "low" | "medium" | "high" | "critical"
+  }>
+  completionPercentage: number
+  recommendations: string[]
+  strengths: string[]
+  concerns: string[]
+}
 
 export interface Submission {
   id: string
-  companyInfo: CompanyInfo
-  responses: AssessmentResponses
+  companyInfo: Record<string, string>
+  responses: Record<string, unknown>
   result: AssessmentResult
   submittedAt: string
   status: SubmissionStatus

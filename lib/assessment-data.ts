@@ -1,782 +1,826 @@
-// Assessment Data Structure: 10 Categories with Subcategories and Questions
-
-export type QuestionType = "rating" | "boolean" | "multipleChoice" | "text"
+/**
+ * TBRAC Assessment Data — 10 modules × 10 criteria each.
+ * All questions scored 0–10: 0 = high risk / non-compliant, 10 = low risk / fully compliant.
+ * Matches mechanism.md exactly.
+ */
 
 export interface Question {
-  id: string
+  id: string       // format: m{module_number}_q{question_number}
   text: string
-  type: QuestionType
-  options?: string[] // For multiple choice
-  weight: number // Weight in scoring (0-1)
-  required: boolean
+  anchor_low: string   // label for score 0
+  anchor_high: string  // label for score 10
+  document_hint?: string  // what evidence to upload for this question
 }
 
-export interface Subcategory {
-  id: string
-  name: string
-  description: string
-  questions: Question[]
-}
-
-export interface Category {
-  id: string
+export interface Module {
+  key: string
+  number: number
   name: string
   icon: string
   description: string
-  subcategories: Subcategory[]
+  document_types: string[]  // recommended document types for this module
+  questions: Question[]
 }
 
-export const ASSESSMENT_CATEGORIES: Category[] = [
+export const ASSESSMENT_MODULES: Module[] = [
   {
-    id: "regulatory-scrutiny",
+    key: "regulatory_scrutiny",
+    number: 1,
     name: "Regulatory Scrutiny",
     icon: "Shield",
-    description: "CFIUS reviews, export controls, and sector-specific compliance analysis",
-    subcategories: [
+    description: "CFIUS reviews, export controls, blacklist status, and sector-specific compliance",
+    document_types: ["CFIUS filing outcomes", "ECCN determinations", "Sector licenses (FDA/FCC/FAA)"],
+    questions: [
       {
-        id: "cfius-review",
-        name: "CFIUS Review Likelihood",
-        description: "Evaluation of Committee on Foreign Investment in the United States review probability",
-        questions: [
-          {
-            id: "cfius-1",
-            text: "Does your company operate in a critical infrastructure sector (telecommunications, energy, finance, etc.)?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "cfius-2",
-            text: "What percentage of your US operations would involve sensitive data or technology?",
-            type: "multipleChoice",
-            options: ["0-25%", "26-50%", "51-75%", "76-100%"],
-            weight: 0.25,
-            required: true,
-          },
-          {
-            id: "cfius-3",
-            text: "On a scale of 0-10, how likely is government access to your data in your home country?",
-            type: "rating",
-            weight: 0.25,
-            required: true,
-          },
-          {
-            id: "cfius-4",
-            text: "Does your company have any government ownership or control (direct or indirect)?",
-            type: "boolean",
-            weight: 0.2,
-            required: true,
-          },
-        ],
+        id: "m1_q1",
+        text: "CFIUS Risk Exposure: What is the nature of your U.S. transaction and existing government ties?",
+        anchor_low: "Blocked/mandatory CFIUS filing",
+        anchor_high: "Low risk / pre-filing clearance obtained",
+        document_hint: "Prior CFIUS filing outcomes or pre-filing correspondence",
       },
       {
-        id: "export-controls",
-        name: "Export Control Compliance",
-        description: "Assessment of dual-use technology and export regulation compliance",
-        questions: [
-          {
-            id: "export-1",
-            text: "Does your technology have potential military or dual-use applications?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "export-2",
-            text: "How familiar is your company with US export control regulations (EAR, ITAR)?",
-            type: "multipleChoice",
-            options: ["Not familiar", "Somewhat familiar", "Very familiar", "Expert level"],
-            weight: 0.25,
-            required: true,
-          },
-          {
-            id: "export-3",
-            text: "Has your company ever been investigated or sanctioned for export violations?",
-            type: "boolean",
-            weight: 0.4,
-            required: true,
-          },
-        ],
+        id: "m1_q2",
+        text: "Export Control Risk: Are your products classified under EAR or ITAR, and do you export controlled U.S. components?",
+        anchor_low: "Uses restricted tech without controls",
+        anchor_high: "No U.S.-origin controlled content",
+        document_hint: "Export Control Classification Number (ECCN) determination",
       },
       {
-        id: "sector-compliance",
-        name: "Sector-Specific Regulations",
-        description: "Industry-specific regulatory requirements and compliance history",
-        questions: [
-          {
-            id: "sector-1",
-            text: "Which industry sector best describes your business?",
-            type: "multipleChoice",
-            options: [
-              "Technology/Software",
-              "Telecommunications",
-              "Financial Services",
-              "Healthcare",
-              "Energy",
-              "Manufacturing",
-              "Other",
-            ],
-            weight: 0.2,
-            required: true,
-          },
-          {
-            id: "sector-2",
-            text: "Rate your compliance record in your home country (0=poor, 10=excellent)",
-            type: "rating",
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "sector-3",
-            text: "Do you have existing US regulatory approvals or licenses?",
-            type: "boolean",
-            weight: 0.4,
-            required: true,
-          },
-        ],
+        id: "m1_q3",
+        text: "Entity List / Sanctions Status: Are you, your subsidiaries, or partners on the BIS Entity List, OFAC SDN, or MEU list?",
+        anchor_low: "Listed on SDN or MEU list",
+        anchor_high: "No exposure to any restricted list",
+        document_hint: "Sanctions screening report",
+      },
+      {
+        id: "m1_q4",
+        text: "National Security Sector: Does your core product belong to a high-risk sector (AI, 5G, biotech, semiconductors)?",
+        anchor_low: "Core product in highest-risk sector",
+        anchor_high: "Non-sensitive consumer industry",
+        document_hint: "Product description and sector classification",
+      },
+      {
+        id: "m1_q5",
+        text: "Ownership Transparency: Is there a CCP committee at board level, or does a state-owned enterprise hold a significant stake?",
+        anchor_low: "State-owned with CCP party committee",
+        anchor_high: "Fully private with transparent ownership",
+        document_hint: "Corporate ownership chart, shareholder registry",
+      },
+      {
+        id: "m1_q6",
+        text: "Data Sovereignty: Do you transfer sensitive U.S. data to China, or is it stored on U.S.-based servers?",
+        anchor_low: "U.S. data transferred to China",
+        anchor_high: "All U.S. data localized on U.S.-based servers",
+        document_hint: "Data flow diagram, cloud infrastructure documentation",
+      },
+      {
+        id: "m1_q7",
+        text: "U.S. Licensing: Have you obtained all required sector-specific U.S. certifications (e.g., FDA, FCC, FAA)?",
+        anchor_low: "Lacks required licenses",
+        anchor_high: "Fully certified for all applicable sectors",
+        document_hint: "Current U.S. regulatory certifications",
+      },
+      {
+        id: "m1_q8",
+        text: "Political / Media Sensitivity: Is your company or industry currently targeted in U.S. congressional hearings or political debate?",
+        anchor_low: "Actively targeted in hearings",
+        anchor_high: "No political or media concern",
+        document_hint: "Media monitoring report",
+      },
+      {
+        id: "m1_q9",
+        text: "Legal Track Record: Do you have a history of U.S. lawsuits, IP theft accusations, or trade litigation?",
+        anchor_low: "Sanctioned or sued for IP theft",
+        anchor_high: "Clean legal track record",
+        document_hint: "Litigation history summary",
+      },
+      {
+        id: "m1_q10",
+        text: "U.S. Entry Strategy: Is your U.S. entity incorporated in the U.S. with an independently governed structure?",
+        anchor_low: "Opaque, Chinese-controlled U.S. entity",
+        anchor_high: "Independent U.S. governance structure",
+        document_hint: "U.S. corporate charter, board composition",
       },
     ],
   },
   {
-    id: "political-geopolitical",
+    key: "political_geopolitical",
+    number: 2,
     name: "Political & Geopolitical Risk",
     icon: "Globe",
-    description: "Trade tensions, sanctions, tariffs, and political climate assessment",
-    subcategories: [
+    description: "Sanctions monitoring, bilateral climate, legislative threats, and lobbying practices",
+    document_types: ["FARA registration", "Sanctions screening reports", "Lobbying disclosures"],
+    questions: [
       {
-        id: "trade-tensions",
-        name: "Trade Relations",
-        description: "Current state of trade relations between countries",
-        questions: [
-          {
-            id: "trade-1",
-            text: "What is your company's country of origin?",
-            type: "text",
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "trade-2",
-            text: "Rate the current trade relationship between your country and the US (0=hostile, 10=excellent)",
-            type: "rating",
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "trade-3",
-            text: "Has your company been affected by tariffs or trade restrictions in the past 5 years?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-        ],
+        id: "m2_q1",
+        text: "Sanctions / Blacklist: Do you have a system to regularly monitor inclusion on OFAC, BIS, FCC, or DoD restricted lists?",
+        anchor_low: "On multiple restricted lists",
+        anchor_high: "No exposure; automated monitoring in place",
+        document_hint: "Sanctions monitoring system documentation",
       },
       {
-        id: "sanctions-risk",
-        name: "Sanctions Exposure",
-        description: "Risk of sanctions or trade restrictions",
-        questions: [
-          {
-            id: "sanctions-1",
-            text: "Is your country currently under any US sanctions or trade restrictions?",
-            type: "boolean",
-            weight: 0.5,
-            required: true,
-          },
-          {
-            id: "sanctions-2",
-            text: "Does your company have business relationships with sanctioned entities?",
-            type: "boolean",
-            weight: 0.5,
-            required: true,
-          },
-        ],
+        id: "m2_q2",
+        text: "CFIUS Probability: Is your business located near sensitive U.S. sites, or do you have access to critical infrastructure data?",
+        anchor_low: "Mandatory CFIUS filing / objection expected",
+        anchor_high: "Historically cleared with no proximity issues",
+        document_hint: "Facility location maps, infrastructure access records",
       },
       {
-        id: "political-climate",
-        name: "Political Environment",
-        description: "Current political attitudes toward foreign investment",
-        questions: [
-          {
-            id: "political-1",
-            text: "Rate the current US political climate toward foreign investment from your country (0=hostile, 10=welcoming)",
-            type: "rating",
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "political-2",
-            text: "Has your company been mentioned in political discourse or media in the US?",
-            type: "multipleChoice",
-            options: ["Never", "Rarely (1-2 times)", "Occasionally (3-10 times)", "Frequently (10+ times)"],
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "political-3",
-            text: "Does your company have established relationships with US political or business leaders?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-        ],
+        id: "m2_q3",
+        text: "Sector Sensitivity: How sensitive is your sector from a national security standpoint?",
+        anchor_low: "Dual-use / military technology",
+        anchor_high: "Retail / consumer products only",
+      },
+      {
+        id: "m2_q4",
+        text: "Bilateral Climate: How do current U.S.–China diplomatic tensions and trade talks impact your business model?",
+        anchor_low: "High tension / active trade war directly impacts operations",
+        anchor_high: "Diplomatic stability; minimal direct impact",
+      },
+      {
+        id: "m2_q5",
+        text: "Legislative Threats: Is your company or sector specifically named in pending U.S. legislation (e.g., RESTRICT Act, CHIPS Act)?",
+        anchor_low: "Explicitly named in pending bills",
+        anchor_high: "No reference in any current legislation",
+        document_hint: "Legislative monitoring report",
+      },
+      {
+        id: "m2_q6",
+        text: "Public Sentiment: What is the frequency and tone of negative U.S. news mentions or social media backlash?",
+        anchor_low: "Regular negative / hostile coverage",
+        anchor_high: "Neutral or positive press coverage",
+        document_hint: "Media sentiment analysis",
+      },
+      {
+        id: "m2_q7",
+        text: "Compliance History: Do you have ongoing U.S. regulatory lawsuits, fines, or enforcement actions?",
+        anchor_low: "Multiple ongoing lawsuits / fines",
+        anchor_high: "No compliance violations",
+        document_hint: "Regulatory compliance history",
+      },
+      {
+        id: "m2_q8",
+        text: "Export Control Risk: Are you involved in sensitive emerging technology subject to EAR controls?",
+        anchor_low: "Core business involves controlled emerging tech",
+        anchor_high: "Not subject to EAR",
+      },
+      {
+        id: "m2_q9",
+        text: "Government / Military Affiliation: Do you hold military contracts or have state-owned enterprise (SOE) status?",
+        anchor_low: "SOE with active military contracts",
+        anchor_high: "Fully private with no government affiliation",
+        document_hint: "Ownership structure documentation",
+      },
+      {
+        id: "m2_q10",
+        text: "Lobbying Practices: Are your U.S. lobbying activities and political engagements registered under FARA?",
+        anchor_low: "No registration / hidden influence activities",
+        anchor_high: "Full FARA compliance; transparent disclosures",
+        document_hint: "FARA registration documents",
       },
     ],
   },
   {
-    id: "data-security",
+    key: "ip_protection",
+    number: 3,
+    name: "IP Protection",
+    icon: "FileText",
+    description: "U.S. patent portfolio, trademark defense, litigation history, and compliance systems",
+    document_types: ["USPTO patent certificates", "Trademark registrations", "IP due diligence reports"],
+    questions: [
+      {
+        id: "m3_q1",
+        text: "Patent Coverage: How many active, granted patents do you hold in the USPTO relevant to your core products?",
+        anchor_low: "No U.S. patents",
+        anchor_high: "Strong, core U.S. patent portfolio",
+        document_hint: "USPTO patent registration certificates",
+      },
+      {
+        id: "m3_q2",
+        text: "Trademark Registration: Do you have active U.S. trademarks and a history of defending them?",
+        anchor_low: "Marks facing cancellation or no registrations",
+        anchor_high: "Fully registered and actively defended",
+        document_hint: "USPTO trademark registration certificates",
+      },
+      {
+        id: "m3_q3",
+        text: "Litigation History: Have you been party to U.S. patent, trademark, or copyright lawsuits?",
+        anchor_low: "Multiple unfavorable litigation outcomes",
+        anchor_high: "Clean record or strong winning history",
+        document_hint: "Litigation history summary",
+      },
+      {
+        id: "m3_q4",
+        text: "ITC Section 337 Investigations: Have you ever been subject to a USITC investigation resulting in an exclusion order?",
+        anchor_low: "History of exclusion orders",
+        anchor_high: "No ITC investigation history",
+        document_hint: "ITC investigation records if applicable",
+      },
+      {
+        id: "m3_q5",
+        text: "Internal Compliance: Do you have a documented IP compliance management system and employee training program?",
+        anchor_low: "No formal IP compliance system",
+        anchor_high: "Comprehensive audited program in place",
+        document_hint: "IP compliance policy, training records",
+      },
+      {
+        id: "m3_q6",
+        text: "Third-Party Due Diligence: Have third-party IP due diligence reports confirmed clean ownership?",
+        anchor_low: "Reports cite red flags or ownership disputes",
+        anchor_high: "Reports confirm strong, clean IP ownership",
+        document_hint: "Third-party IP due diligence report",
+      },
+      {
+        id: "m3_q7",
+        text: "IP Theft Incidents: Does your company have a history of IP theft allegations or government sanctions related to IP?",
+        anchor_low: "Confirmed sanctions or IP theft history",
+        anchor_high: "No history; positive industry reputation",
+        document_hint: "Government records, sanctions history",
+      },
+      {
+        id: "m3_q8",
+        text: "Licensing Transparency: Are all technology licensing agreements documented and compliant?",
+        anchor_low: "Opaque or potentially illegal transfers",
+        anchor_high: "Fully documented and legally compliant",
+        document_hint: "Technology licensing agreements",
+      },
+      {
+        id: "m3_q9",
+        text: "Open Source Usage: Do you have a tracking system ensuring all open-source software is used legally?",
+        anchor_low: "Frequent open-source license violations",
+        anchor_high: "Robust tracking and compliance system",
+        document_hint: "Open-source software audit",
+      },
+      {
+        id: "m3_q10",
+        text: "Peer Risk: How does your IP risk profile compare to industry peers?",
+        anchor_low: "Significantly higher risk than industry average",
+        anchor_high: "Industry leader in IP protection",
+      },
+    ],
+  },
+  {
+    key: "data_security",
+    number: 4,
     name: "Data Security & Privacy",
     icon: "Lock",
-    description: "CCPA compliance, data localization, and cybersecurity evaluation",
-    subcategories: [
+    description: "CCPA/CPRA compliance, data localization, NIST framework, and breach protocols",
+    document_types: ["CCPA compliance audit", "Data breach response plan", "NIST cybersecurity assessment"],
+    questions: [
       {
-        id: "privacy-compliance",
-        name: "Privacy Law Compliance",
-        description: "Adherence to US privacy regulations (CCPA, state laws)",
-        questions: [
-          {
-            id: "privacy-1",
-            text: "Is your company familiar with California Consumer Privacy Act (CCPA) requirements?",
-            type: "multipleChoice",
-            options: ["Not familiar", "Somewhat familiar", "Very familiar", "Fully compliant"],
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "privacy-2",
-            text: "Does your company currently comply with GDPR or similar privacy regulations?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "privacy-3",
-            text: "Rate your data privacy program maturity (0=none, 10=world-class)",
-            type: "rating",
-            weight: 0.35,
-            required: true,
-          },
-        ],
+        id: "m4_q1",
+        text: "CCPA / CPRA Compliance: Does your privacy policy and data handling align with California privacy mandates?",
+        anchor_low: "No privacy policy in place",
+        anchor_high: "Full compliance with regular third-party audits",
+        document_hint: "Privacy policy, CCPA compliance audit",
       },
       {
-        id: "data-localization",
-        name: "Data Storage & Localization",
-        description: "Where and how customer data will be stored",
-        questions: [
-          {
-            id: "data-loc-1",
-            text: "Where would US customer data be primarily stored?",
-            type: "multipleChoice",
-            options: ["US only", "US and home country", "Home country only", "Distributed globally"],
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "data-loc-2",
-            text: "Can you guarantee that US data will not be accessible from your home country?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "data-loc-3",
-            text: "Will you use US-based cloud service providers for US operations?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-        ],
+        id: "m4_q2",
+        text: "Breach Notification Protocol: Do you have a tested, documented breach response meeting U.S. legal timelines?",
+        anchor_low: "History of delayed notifications",
+        anchor_high: "Established, regularly tested protocols",
+        document_hint: "Data breach response plan",
       },
       {
-        id: "cybersecurity",
-        name: "Cybersecurity Practices",
-        description: "Security infrastructure and incident history",
-        questions: [
-          {
-            id: "cyber-1",
-            text: "Does your company have ISO 27001 or SOC 2 certification?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "cyber-2",
-            text: "Has your company experienced any data breaches in the past 5 years?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "cyber-3",
-            text: "Rate your cybersecurity program maturity (0=minimal, 10=enterprise-grade)",
-            type: "rating",
-            weight: 0.35,
-            required: true,
-          },
-        ],
+        id: "m4_q3",
+        text: "Data Localization: Is all U.S. user data stored or mirrored exclusively within compliant U.S. facilities?",
+        anchor_low: "Data stored exclusively overseas",
+        anchor_high: "All data in compliant U.S. facilities",
+        document_hint: "Data storage architecture documentation",
+      },
+      {
+        id: "m4_q4",
+        text: "Cybersecurity Framework: Have you implemented a comprehensive security framework such as NIST CSF?",
+        anchor_low: "Minimal security measures",
+        anchor_high: "NIST-aligned operational framework fully implemented",
+        document_hint: "NIST CSF assessment or equivalent certification",
+      },
+      {
+        id: "m4_q5",
+        text: "Vendor / Third-Party Risk: Do you perform audits and maintain contractual safeguards for all third-party data processors?",
+        anchor_low: "No oversight of third-party processors",
+        anchor_high: "Strict contractual safeguards and regular audits",
+        document_hint: "Vendor risk management policy",
+      },
+      {
+        id: "m4_q6",
+        text: "User Consent Management: Do you have verifiable processes for user data rights and consent?",
+        anchor_low: "No process for user rights or consent",
+        anchor_high: "Verifiable consent with efficient rights management",
+        document_hint: "Consent management platform documentation",
+      },
+      {
+        id: "m4_q7",
+        text: "Forced Disclosure Risk: Are your U.S. data assets technically and legally isolated from Chinese government disclosure mandates?",
+        anchor_low: "High risk via China-routed data flows",
+        anchor_high: "Effective technical and legal isolation",
+        document_hint: "Data flow architecture, legal opinion on Chinese DSL exposure",
+      },
+      {
+        id: "m4_q8",
+        text: "Encryption: Are industry-standard encryption protocols consistently applied to data at rest and in transit?",
+        anchor_low: "Outdated or no encryption",
+        anchor_high: "Industry-standard encryption consistently applied",
+        document_hint: "Encryption policy and implementation documentation",
+      },
+      {
+        id: "m4_q9",
+        text: "Employee Security Training: Is mandatory cybersecurity training with assessments in place for all staff?",
+        anchor_low: "No formal training program",
+        anchor_high: "Mandatory training with regular assessments",
+        document_hint: "Training program records",
+      },
+      {
+        id: "m4_q10",
+        text: "Incident Response: Do you have a robust, tested recovery strategy for cybersecurity incidents?",
+        anchor_low: "No incident response plan",
+        anchor_high: "Robust, tested recovery strategies",
+        document_hint: "Incident response plan, tabletop exercise records",
       },
     ],
   },
   {
-    id: "ip-protection",
-    name: "Intellectual Property Protection",
-    icon: "FileText",
-    description: "IP enforcement mechanisms and dispute history analysis",
-    subcategories: [
-      {
-        id: "ip-compliance",
-        name: "IP Rights & Compliance",
-        description: "Company IP portfolio and respect for third-party IP",
-        questions: [
-          {
-            id: "ip-1",
-            text: "Does your company hold US patents or trademarks?",
-            type: "boolean",
-            weight: 0.25,
-            required: true,
-          },
-          {
-            id: "ip-2",
-            text: "Has your company ever been involved in IP litigation or disputes?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "ip-3",
-            text: "Rate your home country's IP protection enforcement (0=weak, 10=strong)",
-            type: "rating",
-            weight: 0.4,
-            required: true,
-          },
-        ],
-      },
-      {
-        id: "technology-transfer",
-        name: "Technology Transfer Controls",
-        description: "Mechanisms to prevent unauthorized technology transfer",
-        questions: [
-          {
-            id: "tech-trans-1",
-            text: "Does your company have internal policies preventing unauthorized technology transfer?",
-            type: "boolean",
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "tech-trans-2",
-            text: "Would US-developed technology be shared with your home country operations?",
-            type: "multipleChoice",
-            options: ["Never", "With restrictions", "Freely", "Uncertain"],
-            weight: 0.6,
-            required: true,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "reputational",
+    key: "reputational_risk",
+    number: 5,
     name: "Reputational Risk",
     icon: "Users",
-    description: "Media coverage, public opinion, and sentiment analysis",
-    subcategories: [
+    description: "Media sentiment, consumer trust, CSR programs, and crisis management readiness",
+    document_types: ["Media monitoring reports", "Consumer trust surveys", "CSR program documentation"],
+    questions: [
       {
-        id: "media-coverage",
-        name: "Media Presence",
-        description: "Nature and sentiment of media coverage",
-        questions: [
-          {
-            id: "media-1",
-            text: "How would you characterize US media coverage of your company?",
-            type: "multipleChoice",
-            options: ["Mostly positive", "Neutral", "Mixed", "Mostly negative", "No coverage"],
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "media-2",
-            text: "Has your company faced controversies in the past 3 years?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "media-3",
-            text: "Rate your company's brand reputation in your home market (0=poor, 10=excellent)",
-            type: "rating",
-            weight: 0.25,
-            required: true,
-          },
-        ],
+        id: "m5_q1",
+        text: "Media Tone: What is the predominant tone of U.S. media coverage of your company?",
+        anchor_low: "Predominantly negative / high-volume scandal coverage",
+        anchor_high: "Positive or neutral coverage",
+        document_hint: "Media monitoring / sentiment analysis report",
       },
       {
-        id: "public-sentiment",
-        name: "Public Perception",
-        description: "US consumer and stakeholder attitudes",
-        questions: [
-          {
-            id: "sentiment-1",
-            text: "Do you have existing US customers or users?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "sentiment-2",
-            text: "Rate expected US consumer receptiveness to your brand (0=hostile, 10=enthusiastic)",
-            type: "rating",
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "sentiment-3",
-            text: "Does your company actively engage in corporate social responsibility?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "national-security",
-    name: "National Security Concerns",
-    icon: "ShieldAlert",
-    description: "Critical infrastructure involvement and technology transfer concerns",
-    subcategories: [
-      {
-        id: "critical-infrastructure",
-        name: "Critical Infrastructure Involvement",
-        description: "Potential impact on US critical infrastructure",
-        questions: [
-          {
-            id: "crit-infra-1",
-            text: "Would your US operations involve critical infrastructure?",
-            type: "boolean",
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "crit-infra-2",
-            text: "Which sectors would your operations touch?",
-            type: "multipleChoice",
-            options: [
-              "Energy",
-              "Transportation",
-              "Communications",
-              "Financial services",
-              "Defense industrial base",
-              "Healthcare",
-              "None of the above",
-            ],
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "crit-infra-3",
-            text: "Would your operations have access to sensitive US infrastructure data?",
-            type: "boolean",
-            weight: 0.25,
-            required: true,
-          },
-        ],
+        id: "m5_q2",
+        text: "Social Media Sentiment: Is your brand experiencing social media backlash or boycott campaigns in the U.S.?",
+        anchor_low: "Active boycotts or widespread backlash",
+        anchor_high: "Supportive and engaged U.S. audience",
+        document_hint: "Social media sentiment report",
       },
       {
-        id: "security-clearance",
-        name: "Security Clearances",
-        description: "Need for security clearances and background checks",
-        questions: [
-          {
-            id: "clearance-1",
-            text: "Would your US employees require security clearances?",
-            type: "boolean",
-            weight: 0.5,
-            required: true,
-          },
-          {
-            id: "clearance-2",
-            text: "Are you willing to undergo thorough background checks for key personnel?",
-            type: "boolean",
-            weight: 0.5,
-            required: true,
-          },
-        ],
+        id: "m5_q3",
+        text: "Consumer Trust Surveys: What do independent U.S. surveys show about brand trust and acceptance?",
+        anchor_low: "Low trust / strong negative associations",
+        anchor_high: "High brand loyalty and trust",
+        document_hint: "Independent consumer survey results",
+      },
+      {
+        id: "m5_q4",
+        text: "Regulatory Actions: Do you have unresolved U.S. regulatory investigations or consumer complaints?",
+        anchor_low: "Multiple unresolved investigations",
+        anchor_high: "Clean regulatory record",
+        document_hint: "Regulatory action history",
+      },
+      {
+        id: "m5_q5",
+        text: "Communication Transparency: How proactive and timely are your public disclosures and crisis communications?",
+        anchor_low: "Opaque or delayed communications",
+        anchor_high: "Proactive and timely disclosures",
+        document_hint: "Communications policy, press release history",
+      },
+      {
+        id: "m5_q6",
+        text: "CSR Initiatives: Do you have robust, publicized programs aligned with U.S. environmental and labor norms?",
+        anchor_low: "No CSR or inconsistent with U.S. norms",
+        anchor_high: "Robust, well-publicized CSR programs",
+        document_hint: "CSR report or sustainability report",
+      },
+      {
+        id: "m5_q7",
+        text: "Activist Opposition: Is there active, organized opposition or boycott threats from U.S. activist groups?",
+        anchor_low: "Active, widespread organized opposition",
+        anchor_high: "No significant activist resistance",
+      },
+      {
+        id: "m5_q8",
+        text: "Crisis Management: How effectively has your company responded to past negative publicity events?",
+        anchor_low: "Poor past response; damaged reputation",
+        anchor_high: "Effective responses; reputation restored",
+        document_hint: "Crisis management framework",
+      },
+      {
+        id: "m5_q9",
+        text: "Cultural Alignment: Does your brand messaging align with U.S. consumer values and ethical standards?",
+        anchor_low: "Messaging conflicts with U.S. norms",
+        anchor_high: "Fully aligned on ethics and cultural values",
+      },
+      {
+        id: "m5_q10",
+        text: "Stakeholder Engagement: What is the quality of your relationships with U.S. investors, regulators, and communities?",
+        anchor_low: "Adversarial or non-existent relations",
+        anchor_high: "Proactive and cooperative stakeholder engagement",
+        document_hint: "Investor relations materials, community engagement records",
       },
     ],
   },
   {
-    id: "supply-chain",
-    name: "Supply Chain Transparency",
-    icon: "Truck",
-    description: "Supply chain visibility and dependency risks",
-    subcategories: [
-      {
-        id: "supplier-disclosure",
-        name: "Supplier Transparency",
-        description: "Ability to disclose and verify supply chain",
-        questions: [
-          {
-            id: "supply-1",
-            text: "Can you provide full transparency of your supply chain?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "supply-2",
-            text: "What percentage of your suppliers are located in your home country?",
-            type: "multipleChoice",
-            options: ["0-25%", "26-50%", "51-75%", "76-100%"],
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "supply-3",
-            text: "Are any of your critical suppliers state-owned or controlled?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-        ],
-      },
-      {
-        id: "sourcing-alternatives",
-        name: "Alternative Sourcing",
-        description: "Ability to diversify supply sources",
-        questions: [
-          {
-            id: "alt-source-1",
-            text: "Could you source critical components from US or allied suppliers if required?",
-            type: "boolean",
-            weight: 0.5,
-            required: true,
-          },
-          {
-            id: "alt-source-2",
-            text: "Rate the flexibility of your supply chain (0=rigid, 10=highly flexible)",
-            type: "rating",
-            weight: 0.5,
-            required: true,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "market-competition",
-    name: "Market Competition & Behavior",
+    key: "market_access",
+    number: 6,
+    name: "Market Access",
     icon: "TrendingUp",
-    description: "Competitive practices and anti-competitive behavior assessment",
-    subcategories: [
+    description: "Tariff impact, non-tariff barriers, distribution access, and regulatory compliance costs",
+    document_types: ["Tariff analysis", "Distribution agreements", "Market entry legal assessment"],
+    questions: [
       {
-        id: "competitive-practices",
-        name: "Competitive Conduct",
-        description: "History of fair competition and antitrust compliance",
-        questions: [
-          {
-            id: "compete-1",
-            text: "Has your company been investigated for anti-competitive practices?",
-            type: "boolean",
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "compete-2",
-            text: "Does your company receive government subsidies or preferential treatment?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "compete-3",
-            text: "Rate your market position in your home country (0=small player, 10=dominant)",
-            type: "rating",
-            weight: 0.25,
-            required: true,
-          },
-        ],
+        id: "m6_q1",
+        text: "Tariff Impact: How significantly do Section 301 or other U.S. tariffs affect your product pricing competitiveness?",
+        anchor_low: "High tariffs (>15%) severely impact pricing",
+        anchor_high: "Negligible or zero tariff impact",
+        document_hint: "Tariff schedule analysis",
       },
       {
-        id: "pricing-strategy",
-        name: "Pricing & Market Entry",
-        description: "Pricing strategy and market entry approach",
-        questions: [
-          {
-            id: "pricing-1",
-            text: "How would you describe your US market entry pricing strategy?",
-            type: "multipleChoice",
-            options: ["Premium pricing", "Market rate", "Competitive discount", "Aggressive undercutting"],
-            weight: 0.5,
-            required: true,
-          },
-          {
-            id: "pricing-2",
-            text: "Are you willing to compete on equal footing with US competitors?",
-            type: "boolean",
-            weight: 0.5,
-            required: true,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "labor-practices",
-    name: "Labor & Employment Practices",
-    icon: "Briefcase",
-    description: "Employment standards, worker rights, and ethical labor practices",
-    subcategories: [
-      {
-        id: "worker-rights",
-        name: "Worker Rights & Standards",
-        description: "Compliance with labor rights and working conditions",
-        questions: [
-          {
-            id: "labor-1",
-            text: "Does your company comply with ILO (International Labour Organization) standards?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "labor-2",
-            text: "Has your company faced labor disputes or violations in the past 5 years?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-          {
-            id: "labor-3",
-            text: "Rate your workplace safety record (0=poor, 10=excellent)",
-            type: "rating",
-            weight: 0.35,
-            required: true,
-          },
-        ],
+        id: "m6_q2",
+        text: "Non-Tariff Barriers: Are you subject to complex import quotas or lengthy technical standard approvals?",
+        anchor_low: "Multiple restrictive non-tariff barriers",
+        anchor_high: "Straightforward compliance with no significant NTBs",
       },
       {
-        id: "us-employment",
-        name: "US Employment Plans",
-        description: "Plans for hiring and treating US workers",
-        questions: [
-          {
-            id: "us-employ-1",
-            text: "What percentage of your US workforce would be hired locally?",
-            type: "multipleChoice",
-            options: ["0-25%", "26-50%", "51-75%", "76-100%"],
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "us-employ-2",
-            text: "Will you offer compensation competitive with US market rates?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "us-employ-3",
-            text: "Are you committed to US labor law compliance?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-        ],
+        id: "m6_q3",
+        text: "Regulatory Compliance Costs: How stringent and costly are U.S. sector-specific compliance requirements for your product?",
+        anchor_low: "Stringent and costly requirements",
+        anchor_high: "Simple and low-cost compliance pathway",
+        document_hint: "Regulatory compliance cost analysis",
+      },
+      {
+        id: "m6_q4",
+        text: "Market Competition: How entrenched are U.S. competitors and what is the level of local brand loyalty?",
+        anchor_low: "Dominant entrenched incumbents with high loyalty",
+        anchor_high: "Clear niche opportunities with low incumbent lock-in",
+      },
+      {
+        id: "m6_q5",
+        text: "Consumer Alignment: Does your product require significant adaptation to meet U.S. consumer preferences?",
+        anchor_low: "Major product and marketing adaptation required",
+        anchor_high: "Minimal adaptation needed",
+      },
+      {
+        id: "m6_q6",
+        text: "Distribution Access: Do you have established U.S. distribution partners and retail network access?",
+        anchor_low: "Limited or no distribution access",
+        anchor_high: "Wide, readily available distribution partnerships",
+        document_hint: "Distribution partner agreements",
+      },
+      {
+        id: "m6_q7",
+        text: "IP Protection Environment: How robust is U.S. enforcement of your IP rights in your market segment?",
+        anchor_low: "Weak protection or high infringement risk",
+        anchor_high: "Strong U.S. enforcement environment",
+      },
+      {
+        id: "m6_q8",
+        text: "Cultural / Language Barriers: How prepared is your organization for U.S. cultural and language requirements?",
+        anchor_low: "Significant cultural and language barriers",
+        anchor_high: "Bilingual team, well-prepared for localization",
+      },
+      {
+        id: "m6_q9",
+        text: "Policy Stability: What is the risk of sudden U.S. policy changes adversely affecting your market access?",
+        anchor_low: "High risk of sudden adverse policy changes",
+        anchor_high: "Predictable and stable trade environment",
+      },
+      {
+        id: "m6_q10",
+        text: "Customs Complexity: How efficient and accurate are your U.S. customs and import procedures?",
+        anchor_low: "Frequent delays and costly errors",
+        anchor_high: "Efficient, fully CBP-compliant procedures",
+        document_hint: "Customs compliance audit, CBP rulings",
       },
     ],
   },
   {
-    id: "environmental",
-    name: "Environmental & Social Governance",
-    icon: "Leaf",
-    description: "ESG commitments, environmental impact, and sustainability practices",
-    subcategories: [
+    key: "supply_chain",
+    number: 7,
+    name: "Supply Chain",
+    icon: "Truck",
+    description: "Origin traceability, forced labor compliance, supplier diversification, and logistics security",
+    document_types: ["Supply chain audit", "UFLPA compliance records", "CTPAT certification"],
+    questions: [
       {
-        id: "environmental-impact",
-        name: "Environmental Stewardship",
-        description: "Environmental practices and commitments",
-        questions: [
-          {
-            id: "env-1",
-            text: "Does your company have published ESG (Environmental, Social, Governance) goals?",
-            type: "boolean",
-            weight: 0.25,
-            required: true,
-          },
-          {
-            id: "env-2",
-            text: "Rate your company's environmental track record (0=poor, 10=leader)",
-            type: "rating",
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "env-3",
-            text: "Has your company faced environmental violations or fines?",
-            type: "boolean",
-            weight: 0.35,
-            required: true,
-          },
-        ],
+        id: "m7_q1",
+        text: "Origin Transparency: Can you provide a full audit trail for raw materials down to Tier 3 suppliers?",
+        anchor_low: "No traceability beyond Tier 1",
+        anchor_high: "Full raw material records to Tier 3+",
+        document_hint: "Supply chain mapping documentation",
       },
       {
-        id: "sustainability",
-        name: "Sustainability Practices",
-        description: "Long-term sustainability and climate commitments",
-        questions: [
-          {
-            id: "sustain-1",
-            text: "Does your company have carbon neutrality or net-zero commitments?",
-            type: "boolean",
-            weight: 0.4,
-            required: true,
-          },
-          {
-            id: "sustain-2",
-            text: "Are you willing to comply with US environmental regulations that may be stricter than your home country?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-          {
-            id: "sustain-3",
-            text: "Do you have third-party verified sustainability certifications?",
-            type: "boolean",
-            weight: 0.3,
-            required: true,
-          },
-        ],
+        id: "m7_q2",
+        text: "Forced Labor Risk: Do you have verified records proving goods are not linked to forced labor in Xinjiang (UFLPA)?",
+        anchor_low: "No due diligence; Xinjiang exposure risk",
+        anchor_high: "Real-time UFLPA compliance with verified records",
+        document_hint: "UFLPA compliance documentation, supplier certifications",
+      },
+      {
+        id: "m7_q3",
+        text: "Supplier Diversification: What percentage of critical components rely on a single country or region?",
+        anchor_low: ">80% reliance on a single region",
+        anchor_high: "Multiple-country sourcing with no single dependency",
+        document_hint: "Supplier diversification report",
+      },
+      {
+        id: "m7_q4",
+        text: "Sanctions Compliance: Do you have automated screening to ensure no sanctioned suppliers are used?",
+        anchor_low: "Sanctioned suppliers used without screening",
+        anchor_high: "Automated, real-time sanctions screening in place",
+        document_hint: "Sanctions screening system documentation",
+      },
+      {
+        id: "m7_q5",
+        text: "Supply Chain Cybersecurity: Are your logistics and inventory systems NIST/CISA compliant?",
+        anchor_low: "Vulnerable logistics systems with known gaps",
+        anchor_high: "NIST/CISA compliant platforms throughout",
+        document_hint: "Supply chain cybersecurity assessment",
+      },
+      {
+        id: "m7_q6",
+        text: "Customs Readiness: Are all U.S. customs filings accurate and CBP-compliant with minimal delays?",
+        anchor_low: "Frequent delays and errors",
+        anchor_high: "All filings accurate and CBP-compliant",
+        document_hint: "Customs compliance history",
+      },
+      {
+        id: "m7_q7",
+        text: "Ethical / Green Sourcing: Do you have certified ethical and environmental sourcing practices?",
+        anchor_low: "No environmental or ethical audits",
+        anchor_high: "Third-party certified green and ethical sourcing",
+        document_hint: "Ethical sourcing certifications",
+      },
+      {
+        id: "m7_q8",
+        text: "Contingency Planning: Do you have tested alternate supplier plans for critical components?",
+        anchor_low: "No alternate suppliers identified",
+        anchor_high: "Multiple tested contingency supplier plans",
+        document_hint: "Business continuity plan",
+      },
+      {
+        id: "m7_q9",
+        text: "Secure Logistics: Are your transportation and warehousing practices compliant with the CTPAT program?",
+        anchor_low: "No secure logistics protocols",
+        anchor_high: "Full CTPAT participation and certification",
+        document_hint: "CTPAT certification",
+      },
+      {
+        id: "m7_q10",
+        text: "Strategic Industry Risk: Is your supply chain concentrated in sectors facing high U.S. scrutiny (e.g., semiconductors)?",
+        anchor_low: "High exposure in strategically sensitive sectors",
+        anchor_high: "No involvement in high-scrutiny strategic sectors",
+      },
+    ],
+  },
+  {
+    key: "financial_risks",
+    number: 8,
+    name: "Financial & Economic Risks",
+    icon: "DollarSign",
+    description: "Currency hedging, PCAOB audit compliance, SEC readiness, and capital structure resilience",
+    document_types: ["PCAOB-audited financials", "SEC Form 20-F", "Currency hedging policy"],
+    questions: [
+      {
+        id: "m8_q1",
+        text: "Currency Hedging: Do you have a management plan or financial tools (swaps, forwards) to handle RMB-USD volatility?",
+        anchor_low: "No hedging strategy in place",
+        anchor_high: "Comprehensive FX management plan and instruments",
+        document_hint: "FX risk management policy",
+      },
+      {
+        id: "m8_q2",
+        text: "Capital Market Readiness: Are your financials compliant with SEC rules and prepared for U.S. market scrutiny?",
+        anchor_low: "No SEC preparation or compliance",
+        anchor_high: "Fully SEC-compliant and audit-ready",
+        document_hint: "SEC Form 20-F or equivalent",
+      },
+      {
+        id: "m8_q3",
+        text: "Audit Standards: Is your external auditor registered with and in good standing with the PCAOB?",
+        anchor_low: "Non-registered auditor used",
+        anchor_high: "Clean PCAOB audit opinion from registered firm",
+        document_hint: "PCAOB-audited financial statements",
+      },
+      {
+        id: "m8_q4",
+        text: "Federal Policy Impact: How exposed is your capital structure to U.S. interest rate hikes or monetary tightening?",
+        anchor_low: "Highly leveraged with no contingency",
+        anchor_high: "Balanced capital structure with adequate buffers",
+        document_hint: "Capital structure analysis, stress test results",
+      },
+      {
+        id: "m8_q5",
+        text: "Financial / Capital Barriers: Are there restrictions on moving capital between your U.S. and Chinese operations?",
+        anchor_low: "Significant capital movement restrictions",
+        anchor_high: "Structurally tax-efficient with free capital flow",
+        document_hint: "Legal opinion on capital repatriation",
+      },
+      {
+        id: "m8_q6",
+        text: "Trade / Tariff Exposure: How significantly do U.S. tariffs impact your core product line's financial performance?",
+        anchor_low: "Core products heavily tariffed; no mitigation",
+        anchor_high: "Supply chain restructured to minimize tariff impact",
+        document_hint: "Tariff impact analysis",
+      },
+      {
+        id: "m8_q7",
+        text: "CFIUS / National Security Financial Risk: Has your financial profile in high-risk sectors (AI, chips) been reviewed by counsel?",
+        anchor_low: "High-risk sector with no legal review",
+        anchor_high: "Pre-reviewed by qualified CFIUS counsel",
+        document_hint: "CFIUS counsel opinion letter",
+      },
+      {
+        id: "m8_q8",
+        text: "Reporting Transparency: Are your accounts reconciled under both PRC and U.S. GAAP (or IFRS)?",
+        anchor_low: "Opaque GAAP divergence",
+        anchor_high: "Transparent, reconciled dual-standard accounts",
+        document_hint: "Dual GAAP reconciliation report",
+      },
+      {
+        id: "m8_q9",
+        text: "U.S. Banking Infrastructure: Do you have established U.S. banking relationships and credit access?",
+        anchor_low: "No U.S. banking relationships or credit access",
+        anchor_high: "Established revolving U.S. credit lines",
+        document_hint: "U.S. banking relationship documentation",
+      },
+      {
+        id: "m8_q10",
+        text: "Economic Resilience: Have you conducted stress tests for the impact of U.S. inflation or economic downturns?",
+        anchor_low: "Highly exposed with no stress testing",
+        anchor_high: "Proven margin flexibility and economic elasticity",
+        document_hint: "Economic stress test results",
+      },
+    ],
+  },
+  {
+    key: "national_security",
+    number: 9,
+    name: "National Security",
+    icon: "ShieldAlert",
+    description: "Dual-use technology risk, critical infrastructure proximity, and technology transfer controls",
+    document_types: ["Technology classification reports", "Infrastructure access records", "Export compliance audit"],
+    questions: [
+      {
+        id: "m9_q1",
+        text: "Critical Technology Involvement: Is your company directly involved in AI, quantum computing, or advanced robotics?",
+        anchor_low: "Direct involvement in most sensitive categories",
+        anchor_high: "No involvement in critical technology areas",
+        document_hint: "Product / technology description",
+      },
+      {
+        id: "m9_q2",
+        text: "Dual-Use Risk: Can your technologies be easily repurposed for military, intelligence, or surveillance applications?",
+        anchor_low: "Easily repurposed for military or surveillance use",
+        anchor_high: "Single-use civilian application only",
+        document_hint: "Dual-use technology assessment",
+      },
+      {
+        id: "m9_q3",
+        text: "State Control: Is your company fully private, or are there embedded state ownership or CCP units?",
+        anchor_low: "State-owned or CCP units embedded",
+        anchor_high: "Fully private with verifiable independence",
+        document_hint: "Corporate governance documentation",
+      },
+      {
+        id: "m9_q4",
+        text: "Entity List Risk: Are you or your key affiliates at risk of listing on major U.S. watch lists?",
+        anchor_low: "Currently listed on major watch lists",
+        anchor_high: "No current or anticipated sanctions exposure",
+        document_hint: "Sanctions risk assessment",
+      },
+      {
+        id: "m9_q5",
+        text: "Infrastructure Proximity: Is your business physically or digitally integrated with U.S. telecom, power, or defense systems?",
+        anchor_low: "Deeply integrated with critical U.S. networks",
+        anchor_high: "No proximity to or integration with sensitive sites",
+        document_hint: "Facility maps, network architecture diagrams",
+      },
+      {
+        id: "m9_q6",
+        text: "U.S. Data Access: Does your company handle large volumes of sensitive U.S. personal data (health, biometric, financial)?",
+        anchor_low: "Handles large volumes of sensitive biometric / health data",
+        anchor_high: "No sensitive U.S. personal data collected",
+        document_hint: "Data inventory and classification",
+      },
+      {
+        id: "m9_q7",
+        text: "Export Compliance Infrastructure: How mature is your export compliance program, and do you have a history of violations?",
+        anchor_low: "History of export violations or evasion",
+        anchor_high: "Mature compliance infrastructure with clean record",
+        document_hint: "Export compliance program documentation",
+      },
+      {
+        id: "m9_q8",
+        text: "CFIUS History: Has your company had prior CFIUS interventions, forced divestitures, or repeated rejections?",
+        anchor_low: "Repeated CFIUS rejections or divestitures",
+        anchor_high: "No prior CFIUS intervention",
+        document_hint: "CFIUS history documentation",
+      },
+      {
+        id: "m9_q9",
+        text: "Research Collaboration: Do you engage in joint R&D with U.S. universities or labs without documented security safeguards?",
+        anchor_low: "Unprotected collaboration in defense-adjacent research",
+        anchor_high: "No joint research or fully safeguarded partnerships",
+        document_hint: "Research collaboration agreements",
+      },
+      {
+        id: "m9_q10",
+        text: "Personnel / Technology Transfer: Is there a technical firewall preventing unrestricted technology flow between U.S. and PRC operations?",
+        anchor_low: "Unrestricted technology and personnel transfer",
+        anchor_high: "Strong jurisdictional separation enforced",
+        document_hint: "Technology transfer control policy",
+      },
+    ],
+  },
+  {
+    key: "corporate_governance",
+    number: 10,
+    name: "Corporate Governance",
+    icon: "Building2",
+    description: "Board independence, audit transparency, HFCAA compliance, and shareholder rights",
+    document_types: ["Board composition report", "PCAOB audit working papers access", "Whistleblower policy"],
+    questions: [
+      {
+        id: "m10_q1",
+        text: "Board Independence: Is the majority of your board independent, and are audit committees independently staffed?",
+        anchor_low: "Board dominated by insiders",
+        anchor_high: "Majority independent members with independent audit committee",
+        document_hint: "Board composition report, director bios",
+      },
+      {
+        id: "m10_q2",
+        text: "Audit Oversight (HFCAA): Do you allow U.S. regulators full inspection of your audit working papers?",
+        anchor_low: "Audit working papers denied to U.S. regulators",
+        anchor_high: "Fully PCAOB-compliant with unrestricted access",
+        document_hint: "PCAOB inspection correspondence",
+      },
+      {
+        id: "m10_q3",
+        text: "Disclosure Quality: Are your SEC filings and financial disclosures timely, complete, and reconciled?",
+        anchor_low: "Frequently late or misleading disclosures",
+        anchor_high: "Timely, accurate, SEC-reconciled accounts",
+        document_hint: "SEC filing history",
+      },
+      {
+        id: "m10_q4",
+        text: "Internal Controls (ICFR): Is your internal financial reporting system independently validated and CEO/CFO certified?",
+        anchor_low: "No ICFR disclosures or certification",
+        anchor_high: "Independently validated and annually certified",
+        document_hint: "SOX 302/404 certifications",
+      },
+      {
+        id: "m10_q5",
+        text: "Political Connections: Are board members or executives free from undisclosed CCP connections or political influence?",
+        anchor_low: "Hidden CCP units or political influence",
+        anchor_high: "Transparent firewall from political connections",
+        document_hint: "Director conflict of interest disclosures",
+      },
+      {
+        id: "m10_q6",
+        text: "Executive Compensation: Are executive pay structures transparent, itemized, and linked to performance?",
+        anchor_low: "Opaque bonus structures with no public disclosure",
+        anchor_high: "Itemized, performance-linked compensation disclosed",
+        document_hint: "Executive compensation disclosures",
+      },
+      {
+        id: "m10_q7",
+        text: "Whistleblower Protections: Do you have an anonymous, independent whistleblower program with no retaliation history?",
+        anchor_low: "No policy or confirmed retaliation incidents",
+        anchor_high: "Anonymous, independent program with strong protection",
+        document_hint: "Whistleblower policy documentation",
+      },
+      {
+        id: "m10_q8",
+        text: "Related-Party Transactions: Are all deals involving shareholders, executives, or state entities disclosed and approved by independent directors?",
+        anchor_low: "Frequent undisclosed related-party transactions",
+        anchor_high: "All deals approved by independent directors",
+        document_hint: "Related-party transaction disclosures",
+      },
+      {
+        id: "m10_q9",
+        text: "Shareholder Rights: Do you operate under a one-share-one-vote policy, or is control concentrated via dual-class shares?",
+        anchor_low: "Control concentrated via dual-class shares",
+        anchor_high: "One-share-one-vote policy in place",
+        document_hint: "Corporate charter, share structure documentation",
+      },
+      {
+        id: "m10_q10",
+        text: "ESG Governance: Does your board have a dedicated ESG risk committee with diverse membership?",
+        anchor_low: "No ESG oversight or board diversity",
+        anchor_high: "Diverse board with active ESG risk committee",
+        document_hint: "ESG report, board committee charters",
       },
     ],
   },
 ]
 
-// Helper functions
-export function getAllQuestions(): Question[] {
-  const questions: Question[] = []
-  ASSESSMENT_CATEGORIES.forEach((category) => {
-    category.subcategories.forEach((subcategory) => {
-      questions.push(...subcategory.questions)
-    })
-  })
-  return questions
+// ─── Helper functions ─────────────────────────────────────────────────────────
+
+export function getModuleByKey(key: string): Module | undefined {
+  return ASSESSMENT_MODULES.find((m) => m.key === key)
 }
 
-export function getQuestionsByCategory(categoryId: string): Question[] {
-  const category = ASSESSMENT_CATEGORIES.find((c) => c.id === categoryId)
-  if (!category) return []
-
-  const questions: Question[] = []
-  category.subcategories.forEach((subcategory) => {
-    questions.push(...subcategory.questions)
-  })
-  return questions
+export function getModuleByNumber(number: number): Module | undefined {
+  return ASSESSMENT_MODULES.find((m) => m.number === number)
 }
 
-export function getCategoryById(categoryId: string): Category | undefined {
-  return ASSESSMENT_CATEGORIES.find((c) => c.id === categoryId)
-}
-
-export const TOTAL_QUESTIONS = getAllQuestions().length
+export const MODULE_KEYS = ASSESSMENT_MODULES.map((m) => m.key)
+export const TOTAL_QUESTIONS = ASSESSMENT_MODULES.length * 10

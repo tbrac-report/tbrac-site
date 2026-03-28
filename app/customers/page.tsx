@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
-import { Header } from "@/components/header";
+import { PortalHeader } from "@/components/portal-header";
 import { useCustomers } from "@/hooks/use-customers";
 import {
   IndustrySector,
@@ -84,7 +84,7 @@ function CustomersContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <PortalHeader />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Page Header */}

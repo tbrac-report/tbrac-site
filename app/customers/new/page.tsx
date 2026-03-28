@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
-import { Header } from "@/components/header";
+import { PortalHeader } from "@/components/portal-header";
 import { useCreateCustomer } from "@/hooks/use-customers";
 import { useApiToast } from "@/hooks/use-api-toast";
 import {
@@ -140,7 +140,7 @@ function NewCustomerContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <PortalHeader />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-3xl mx-auto space-y-6">
           {/* Page Header */}
@@ -191,17 +191,6 @@ function NewCustomerContent() {
                       )}
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="chinese_name">Chinese Name</Label>
-                      <Input
-                        id="chinese_name"
-                        value={formData.chinese_name}
-                        onChange={(e) =>
-                          updateField("chinese_name", e.target.value)
-                        }
-                        placeholder="e.g., 字节跳动"
-                      />
-                    </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="industry_sector">

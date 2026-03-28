@@ -1,5 +1,4 @@
 import type { Submission } from "./evaluator-types"
-import { ASSESSMENT_CATEGORIES } from "./assessment-data"
 
 export interface ReportData {
   submission: Submission
@@ -344,19 +343,10 @@ export function downloadJSON(data: string, filename: string) {
 }
 
 export function exportToCSV(submission: Submission): string {
-  let csv = "Category,Subcategory,Question,Answer,Score\n"
+  let csv = "Category,Score\n"
 
-  ASSESSMENT_CATEGORIES.forEach((category) => {
-    const categoryScore = submission.result.categoryScores.find((cs) => cs.categoryId === category.id)
-
-    category.subcategories.forEach((subcategory) => {
-      subcategory.questions.forEach((question) => {
-        const answer = submission.responses[question.id]
-        const answerStr = answer !== undefined ? String(answer).replace(/,/g, ";") : "Not answered"
-
-        csv += `"${category.name}","${subcategory.name}","${question.text.replace(/"/g, '""')}","${answerStr}","${categoryScore ? Math.round(categoryScore.score) : 0}"\n`
-      })
-    })
+  submission.result.categoryScores.forEach((cs) => {
+    csv += `"${cs.categoryName}","${Math.round(cs.score)}"\n`
   })
 
   return csv

@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { LanguageProvider } from "@/lib/language-context";
-import { AssessmentProvider } from "@/lib/assessment-context";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,9 +43,10 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <AuthProvider>
           <LanguageProvider>
-            <AssessmentProvider>{children}</AssessmentProvider>
+            {children}
           </LanguageProvider>
         </AuthProvider>
+        <Toaster />
         <Analytics />
       </body>
     </html>
