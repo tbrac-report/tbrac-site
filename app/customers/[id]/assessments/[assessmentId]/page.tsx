@@ -200,7 +200,13 @@ function AssessmentDashboardContent({ params }: PageProps) {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Overall Risk Score</p>
-                    <p className="text-5xl font-bold mt-1">
+                    <p className={`text-5xl font-bold mt-1 ${
+                      assessment.total_score == null ? "" :
+                      assessment.total_score <= 30 ? "text-green-600" :
+                      assessment.total_score <= 50 ? "text-yellow-600" :
+                      assessment.total_score <= 70 ? "text-orange-600" :
+                      "text-red-600"
+                    }`}>
                       {assessment.total_score ?? "—"}
                       <span className="text-2xl text-muted-foreground font-normal">
                         /100

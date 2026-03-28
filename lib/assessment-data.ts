@@ -29,7 +29,12 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "Regulatory Scrutiny",
     icon: "Shield",
     description: "CFIUS reviews, export controls, blacklist status, and sector-specific compliance",
-    document_types: ["CFIUS filing outcomes", "ECCN determinations", "Sector licenses (FDA/FCC/FAA)"],
+    document_types: [
+      "Mandatory CFIUS filing status",
+      "Export Control Classification Numbers (ECCN)",
+      "Records of CCP Party Committee presence in governance",
+      "Proof of U.S. licensing completeness (FDA, FCC approvals)",
+    ],
     questions: [
       {
         id: "m1_q1",
@@ -109,7 +114,11 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "Political & Geopolitical Risk",
     icon: "Globe",
     description: "Sanctions monitoring, bilateral climate, legislative threats, and lobbying practices",
-    document_types: ["FARA registration", "Sanctions screening reports", "Lobbying disclosures"],
+    document_types: [
+      "Lobbying and transparency practice filings",
+      "Documentation of affiliations with Chinese government or military",
+      "FARA (Foreign Agents Registration Act) registration status",
+    ],
     questions: [
       {
         id: "m2_q1",
@@ -186,7 +195,12 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "IP Protection",
     icon: "FileText",
     description: "U.S. patent portfolio, trademark defense, litigation history, and compliance systems",
-    document_types: ["USPTO patent certificates", "Trademark registrations", "IP due diligence reports"],
+    document_types: [
+      "U.S.-registered patents and trademarks",
+      "Internal IP compliance manuals",
+      "Third-party IP due diligence reports",
+      "Licensing and transfer agreement transparency records",
+    ],
     questions: [
       {
         id: "m3_q1",
@@ -265,7 +279,12 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "Data Security & Privacy",
     icon: "Lock",
     description: "CCPA/CPRA compliance, data localization, NIST framework, and breach protocols",
-    document_types: ["CCPA compliance audit", "Data breach response plan", "NIST cybersecurity assessment"],
+    document_types: [
+      "Corporate privacy policies",
+      "Data breach response plans",
+      "Contracts showing data localization compliance",
+      "Cybersecurity control implementation records",
+    ],
     questions: [
       {
         id: "m4_q1",
@@ -345,7 +364,12 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "Reputational Risk",
     icon: "Users",
     description: "Media sentiment, consumer trust, CSR programs, and crisis management readiness",
-    document_types: ["Media monitoring reports", "Consumer trust surveys", "CSR program documentation"],
+    document_types: [
+      "Corporate Social Responsibility (CSR) reports",
+      "Advertising compliance audits",
+      "Investor relations communications",
+      "Crisis management effectiveness logs",
+    ],
     questions: [
       {
         id: "m5_q1",
@@ -423,7 +447,12 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "Market Access",
     icon: "TrendingUp",
     description: "Tariff impact, non-tariff barriers, distribution access, and regulatory compliance costs",
-    document_types: ["Tariff analysis", "Distribution agreements", "Market entry legal assessment"],
+    document_types: [
+      "Import documentation",
+      "Product-specific safety certifications",
+      "HTS (Harmonized Tariff Schedule) code categorizations",
+      "Market research on consumer preference alignment",
+    ],
     questions: [
       {
         id: "m6_q1",
@@ -497,7 +526,12 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "Supply Chain",
     icon: "Truck",
     description: "Origin traceability, forced labor compliance, supplier diversification, and logistics security",
-    document_types: ["Supply chain audit", "UFLPA compliance records", "CTPAT certification"],
+    document_types: [
+      "Origin of goods documentation",
+      "Supplier codes of conduct",
+      "Tier 1–3 supply chain mapping",
+      "CTPAT (Customs-Trade Partnership Against Terrorism) security protocols",
+    ],
     questions: [
       {
         id: "m7_q1",
@@ -576,7 +610,12 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "Financial & Economic Risks",
     icon: "DollarSign",
     description: "Currency hedging, PCAOB audit compliance, SEC readiness, and capital structure resilience",
-    document_types: ["PCAOB-audited financials", "SEC Form 20-F", "Currency hedging policy"],
+    document_types: [
+      "SEC filings (Forms F-1 or 20-F)",
+      "Currency hedging strategy records",
+      "SOX (Sarbanes-Oxley Act) internal control attestations",
+      "U.S. banking relationship records",
+    ],
     questions: [
       {
         id: "m8_q1",
@@ -656,7 +695,11 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "National Security",
     icon: "ShieldAlert",
     description: "Dual-use technology risk, critical infrastructure proximity, and technology transfer controls",
-    document_types: ["Technology classification reports", "Infrastructure access records", "Export compliance audit"],
+    document_types: [
+      "Export control compliance manuals",
+      "R&D partnership grant disclosures",
+      "Cybersecurity access protocols for remote or cloud systems",
+    ],
     questions: [
       {
         id: "m9_q1",
@@ -736,7 +779,12 @@ export const ASSESSMENT_MODULES: Module[] = [
     name: "Corporate Governance",
     icon: "Building2",
     description: "Board independence, audit transparency, HFCAA compliance, and shareholder rights",
-    document_types: ["Board composition report", "PCAOB audit working papers access", "Whistleblower policy"],
+    document_types: [
+      "Corporate charters and bylaws",
+      "Board composition reports",
+      "Whistleblower protection policies",
+      "Detailed related-party transaction disclosures",
+    ],
     questions: [
       {
         id: "m10_q1",
