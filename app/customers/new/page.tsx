@@ -35,11 +35,13 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Save } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 function NewCustomerContent() {
   const router = useRouter();
   const { create, loading } = useCreateCustomer();
   const { handleError, showSuccess } = useApiToast();
+  const { t } = useLanguage();
 
   const [formData, setFormData] = useState<CustomerCreate>({
     name: "",
@@ -64,11 +66,11 @@ function NewCustomerContent() {
     const errors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      errors.name = "Company name is required";
+      errors.name = t("newCustomerErrName");
     }
 
     if (!formData.headquarters_country.trim()) {
-      errors.headquarters_country = "Headquarters country is required";
+      errors.headquarters_country = t("newCustomerErrCountry");
     }
 
     if (
@@ -77,12 +79,12 @@ function NewCustomerContent() {
     ) {
       const percentage = Number(formData.state_ownership_percentage);
       if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-        errors.state_ownership_percentage = "Must be between 0 and 100";
+        errors.state_ownership_percentage = t("newCustomerErrPercentage");
       }
     }
 
     if (formData.website && !formData.website.match(/^https?:\/\/.+/)) {
-      errors.website = "Must be a valid URL starting with http:// or https://";
+      errors.website = t("newCustomerErrWebsite");
     }
 
     setValidationErrors(errors);
@@ -115,7 +117,7 @@ function NewCustomerContent() {
 
       const customer = await create(cleanedData);
       if (customer) {
-        showSuccess("Customer created successfully");
+        showSuccess(t("newCustomerSuccess"));
         router.push(`/customers/${customer.id}`);
       }
     } catch (err) {
@@ -153,9 +155,9 @@ function NewCustomerContent() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
-              <h1 className="text-3xl font-bold">New Customer</h1>
+              <h1 className="text-3xl font-bold">{t("newCustomerTitle")}</h1>
               <p className="text-muted-foreground mt-1">
-                Create a new customer record
+                {t("newCustomerSubtitle")}
               </p>
             </div>
           </div>
@@ -164,19 +166,19 @@ function NewCustomerContent() {
           <form onSubmit={handleSubmit}>
             <Card>
               <CardHeader>
-                <CardTitle>Customer Information</CardTitle>
+                <CardTitle>{t("newCustomerCardTitle")}</CardTitle>
                 <CardDescription>
-                  Fill in the details for the new customer
+                  {t("newCustomerCardDesc")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Basic Information */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Basic Information</h3>
+                  <h3 className="text-lg font-medium">{t("newCustomerBasicInfo")}</h3>
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="name">
-                        Company Name <span className="text-red-600">*</span>
+                        {t("newCustomerCompanyName")} <span className="text-red-600">*</span>
                       </Label>
                       <Input
                         id="name"
@@ -194,7 +196,7 @@ function NewCustomerContent() {
 
                     <div className="space-y-2">
                       <Label htmlFor="industry_sector">
-                        Industry Sector <span className="text-red-600">*</span>
+                        {t("newCustomerIndustry")} <span className="text-red-600">*</span>
                       </Label>
                       <Select
                         value={formData.industry_sector}
@@ -217,7 +219,7 @@ function NewCustomerContent() {
 
                     <div className="space-y-2">
                       <Label htmlFor="ownership_type">
-                        Ownership Type <span className="text-red-600">*</span>
+                        {t("newCustomerOwnership")} <span className="text-red-600">*</span>
                       </Label>
                       <Select
                         value={formData.ownership_type}
@@ -242,7 +244,7 @@ function NewCustomerContent() {
                   {showStateOwnership && (
                     <div className="space-y-2">
                       <Label htmlFor="state_ownership_percentage">
-                        State Ownership Percentage (%)
+                        {t("newCustomerStateOwnership")}
                       </Label>
                       <Input
                         id="state_ownership_percentage"
@@ -271,11 +273,11 @@ function NewCustomerContent() {
 
                 {/* Location */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Location</h3>
+                  <h3 className="text-lg font-medium">{t("newCustomerLocation")}</h3>
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="headquarters_country">
-                        Headquarters Country{" "}
+                        {t("newCustomerHQCountry")}{" "}
                         <span className="text-red-600">*</span>
                       </Label>
                       <Input
@@ -295,7 +297,7 @@ function NewCustomerContent() {
 
                     <div className="space-y-2">
                       <Label htmlFor="headquarters_city">
-                        Headquarters City
+                        {t("newCustomerHQCity")}
                       </Label>
                       <Input
                         id="headquarters_city"
@@ -313,24 +315,24 @@ function NewCustomerContent() {
 
                 {/* US Presence */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">US Presence</h3>
+                  <h3 className="text-lg font-medium">{t("newCustomerUSPresence")}</h3>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="us_presence">US Presence Details</Label>
+                      <Label htmlFor="us_presence">{t("newCustomerUSPresenceDetails")}</Label>
                       <Textarea
                         id="us_presence"
                         value={formData.us_presence}
                         onChange={(e) =>
                           updateField("us_presence", e.target.value)
                         }
-                        placeholder="Describe the company's presence in the United States..."
+                        placeholder={t("newCustomerUSPresencePlaceholder")}
                         rows={3}
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="us_subsidiary_name">
-                        US Subsidiary Name
+                        {t("newCustomerUSSubsidiary")}
                       </Label>
                       <Input
                         id="us_subsidiary_name"
@@ -349,11 +351,11 @@ function NewCustomerContent() {
                 {/* Additional Information */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium">
-                    Additional Information
+                    {t("newCustomerAdditional")}
                   </h3>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="website">Website</Label>
+                      <Label htmlFor="website">{t("newCustomerWebsite")}</Label>
                       <Input
                         id="website"
                         type="url"
@@ -369,12 +371,12 @@ function NewCustomerContent() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="notes">Notes</Label>
+                      <Label htmlFor="notes">{t("newCustomerNotes")}</Label>
                       <Textarea
                         id="notes"
                         value={formData.notes}
                         onChange={(e) => updateField("notes", e.target.value)}
-                        placeholder="Additional notes about this customer..."
+                        placeholder={t("newCustomerNotesPlaceholder")}
                         rows={4}
                       />
                     </div>
@@ -389,11 +391,11 @@ function NewCustomerContent() {
                     onClick={() => router.push("/customers")}
                     disabled={loading}
                   >
-                    Cancel
+                    {t("newCustomerCancel")}
                   </Button>
                   <Button type="submit" disabled={loading}>
                     <Save className="mr-2 h-4 w-4" />
-                    {loading ? "Creating..." : "Create Customer"}
+                    {loading ? t("newCustomerCreating") : t("newCustomerCreate")}
                   </Button>
                 </div>
               </CardContent>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Globe, Users, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/language-context";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,6 +16,7 @@ import {
 
 export function PortalHeader() {
   const { user, signOut } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -24,7 +26,7 @@ export function PortalHeader() {
   };
 
   const navLinks = [
-    { href: "/customers", label: "Customers", icon: Users },
+    { href: "/customers", label: t("portalCustomers"), icon: Users },
   ];
 
   return (
@@ -68,6 +70,14 @@ export function PortalHeader() {
             </nav>
           </div>
 
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLanguage(language === "en" ? "zh" : "en")}
+              className="text-xs font-medium px-2.5 py-1 rounded border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+            >
+              {language === "en" ? "中文" : "EN"}
+            </button>
+
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -93,11 +103,12 @@ export function PortalHeader() {
                   className="text-red-600 cursor-pointer"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
+                  {t("portalSignOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+          </div>
         </div>
       </div>
     </header>

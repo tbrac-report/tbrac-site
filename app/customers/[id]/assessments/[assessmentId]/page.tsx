@@ -9,6 +9,7 @@ import { useAssessment, useSubmitAssessment } from "@/hooks/use-assessments";
 import { useApiToast } from "@/hooks/use-api-toast";
 import { ASSESSMENT_MODULES } from "@/lib/assessment-data";
 import type { AssessmentModuleSummary, RiskTier } from "@/lib/api-types";
+import { useLanguage } from "@/lib/language-context";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,21 +33,25 @@ import {
   Send,
   ChevronRight,
 } from "lucide-react";
+import { AssessmentChatbot } from "@/components/assessment-chatbot";
 
 interface PageProps {
   params: Promise<{ id: string; assessmentId: string }>;
 }
 
 function RiskTierBadge({ tier }: { tier: RiskTier | null }) {
+  // Note: t() is not available here (outside component), so we use a prop
   if (!tier) return <Badge variant="outline">Not scored</Badge>;
-  const config: Record<RiskTier, { className: string }> = {
+  const config: Record<string, { className: string }> = {
     Low:         { className: "bg-green-50 text-green-700 border-green-200" },
     Medium:      { className: "bg-yellow-50 text-yellow-700 border-yellow-200" },
     High:        { className: "bg-orange-50 text-orange-700 border-orange-200" },
     "Very High": { className: "bg-red-50 text-red-700 border-red-200" },
+    Very_High:   { className: "bg-red-50 text-red-700 border-red-200" },
   };
+  const style = config[tier] ?? { className: "" };
   return (
-    <Badge variant="outline" className={config[tier].className}>
+    <Badge variant="outline" className={style.className}>
       {tier} Risk
     </Badge>
   );
@@ -60,10 +65,10 @@ function ModuleStatusIcon({ status }: { status: string }) {
   return <Circle className="h-5 w-5 text-muted-foreground shrink-0" />;
 }
 
-function moduleStatusLabel(status: string): string {
-  if (status === "completed") return "Completed";
-  if (status === "in_progress") return "In Progress";
-  return "Not Started";
+function moduleStatusLabel(status: string, t: (k: string) => string): string {
+  if (status === "completed") return t("statusCompleted");
+  if (status === "in_progress") return t("statusInProgress");
+  return t("statusNotStarted");
 }
 
 function moduleStatusVariant(
@@ -81,6 +86,8 @@ function AssessmentDashboardContent({ params }: PageProps) {
   const { data: assessment, loading, error, refetch } = useAssessment(assessmentId);
   const { submit, loading: submitting } = useSubmitAssessment();
   const { handleError, showSuccess } = useApiToast();
+
+  const { t, language } = useLanguage();
 
   const handleSubmit = async () => {
     try {
@@ -149,7 +156,7 @@ function AssessmentDashboardContent({ params }: PageProps) {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div>
-                <h1 className="text-3xl font-bold">Assessment</h1>
+                <h1 className="text-3xl font-bold">{t("assessmentTitle")}</h1>
                 {customer && (
                   <p className="text-muted-foreground mt-1">{customer.name}</p>
                 )}
@@ -158,10 +165,10 @@ function AssessmentDashboardContent({ params }: PageProps) {
 
             <div className="flex items-center gap-3">
               {assessment.status === "submitted" ? (
-                <Badge className="bg-green-600 text-white">Submitted</Badge>
+                <Badge className="bg-green-600 text-white">{t("assessmentSubmitted")}</Badge>
               ) : (
                 <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-                  In Progress
+                  {t("assessmentInProgress")}
                 </Badge>
               )}
               {canSubmit && (
@@ -169,22 +176,20 @@ function AssessmentDashboardContent({ params }: PageProps) {
                   <AlertDialogTrigger asChild>
                     <Button disabled={submitting}>
                       <Send className="mr-2 h-4 w-4" />
-                      {submitting ? "Submitting..." : "Submit Assessment"}
+                      {submitting ? t("assessmentSubmitting") : t("assessmentSubmit")}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Submit Assessment?</AlertDialogTitle>
+                      <AlertDialogTitle>{t("assessmentSubmitConfirm")}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        All 10 modules are complete. Once submitted, the
-                        assessment will be locked for review. This action cannot
-                        be undone.
+                        {t("assessmentSubmitDesc")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{t("btnCancel")}</AlertDialogCancel>
                       <AlertDialogAction onClick={handleSubmit}>
-                        Submit
+                        {t("assessmentSubmit")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -199,7 +204,7 @@ function AssessmentDashboardContent({ params }: PageProps) {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Overall Risk Score</p>
+                    <p className="text-sm text-muted-foreground">{t("overallRiskScore")}</p>
                     <p className={`text-5xl font-bold mt-1 ${
                       assessment.total_score == null ? "" :
                       assessment.total_score <= 30 ? "text-green-600" :
@@ -213,11 +218,11 @@ function AssessmentDashboardContent({ params }: PageProps) {
                       </span>
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Higher score = higher risk
+                      {t("higherScoreHigherRisk")}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-muted-foreground mb-1">Risk Tier</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t("riskTier")}</p>
                     <RiskTierBadge tier={assessment.risk_tier} />
                   </div>
                 </div>
@@ -229,7 +234,7 @@ function AssessmentDashboardContent({ params }: PageProps) {
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               <span className="font-semibold text-foreground">{completedCount}</span>{" "}
-              of 10 modules completed
+              {t("assessmentProgress")}
             </p>
             <div className="h-2 w-48 rounded-full bg-muted overflow-hidden">
               <div
@@ -270,7 +275,7 @@ function AssessmentDashboardContent({ params }: PageProps) {
                       <div className="flex items-center gap-2">
                         <ModuleStatusIcon status={status} />
                         <span className="text-xs font-medium text-muted-foreground">
-                          Module {mod.number}
+                          {t("assessmentModulePrefix")} {mod.number}
                         </span>
                       </div>
                       {!isSubmitted && (
@@ -278,12 +283,12 @@ function AssessmentDashboardContent({ params }: PageProps) {
                       )}
                     </div>
                     <CardTitle className="text-base leading-tight mt-1">
-                      {mod.name}
+                      {language === "zh" ? mod.name_zh : mod.name}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
                     <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
-                      {mod.description}
+                      {language === "zh" ? mod.description_zh : mod.description}
                     </p>
                     {score !== null && score !== undefined ? (
                       <div className="space-y-2">
@@ -292,7 +297,7 @@ function AssessmentDashboardContent({ params }: PageProps) {
                             variant="outline"
                             className="text-xs bg-green-600 text-white border-green-600"
                           >
-                            Completed
+                            {t("assessmentModuleCompleted")}
                           </Badge>
                           <span
                             className={`text-lg font-bold ${
@@ -331,7 +336,7 @@ function AssessmentDashboardContent({ params }: PageProps) {
                             : ""
                         }`}
                       >
-                        {moduleStatusLabel(status)}
+                        {moduleStatusLabel(status, t)}
                       </Badge>
                     )}
                   </CardContent>
@@ -342,11 +347,15 @@ function AssessmentDashboardContent({ params }: PageProps) {
 
           {!allCompleted && assessment.status !== "submitted" && (
             <p className="text-sm text-center text-muted-foreground">
-              Complete all 10 modules to submit the assessment.
+              {t("assessmentAllModulesMsg")}
             </p>
           )}
         </div>
       </div>
+      <AssessmentChatbot
+        assessmentId={assessmentId}
+        companyName={customer?.name ?? ""}
+      />
     </div>
   );
 }

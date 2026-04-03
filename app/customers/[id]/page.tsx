@@ -85,6 +85,7 @@ import {
   ClipboardList,
   Plus,
 } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -107,6 +108,7 @@ function CustomerDetailContent({ params }: PageProps) {
   const { update, loading: updating } = useUpdateCustomer();
   const { deleteCustomer, loading: deleting } = useDeleteCustomer();
   const { handleError, showSuccess } = useApiToast();
+  const { t } = useLanguage();
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [formData, setFormData] = useState<CustomerUpdate>({});
@@ -177,7 +179,7 @@ function CustomerDetailContent({ params }: PageProps) {
       });
 
       await update(resolvedParams.id, cleanedData);
-      showSuccess("Customer updated successfully");
+      showSuccess(t("customerUpdatedSuccess"));
       setEditDialogOpen(false);
       refetch();
     } catch (err) {
@@ -188,7 +190,7 @@ function CustomerDetailContent({ params }: PageProps) {
   const handleDelete = async () => {
     try {
       await deleteCustomer(resolvedParams.id);
-      showSuccess("Customer deleted successfully");
+      showSuccess(t("customerDeletedSuccess"));
       router.push("/customers");
     } catch (err) {
       handleError(err);
@@ -241,14 +243,14 @@ function CustomerDetailContent({ params }: PageProps) {
           <div className="max-w-5xl mx-auto">
             <div className="text-center py-12">
               <h2 className="text-2xl font-bold text-red-600">
-                Customer Not Found
+                {t("customerNotFound")}
               </h2>
               <p className="mt-2 text-muted-foreground">{error}</p>
               <Button
                 className="mt-4"
                 onClick={() => router.push("/customers")}
               >
-                Back to Customers
+                {t("customerBackToList")}
               </Button>
             </div>
           </div>
@@ -284,31 +286,31 @@ function CustomerDetailContent({ params }: PageProps) {
             <div className="flex items-center gap-2">
               <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
                 <Edit className="mr-2 h-4 w-4" />
-                Edit
+                {t("customerEdit")}
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="outline" className="text-red-600">
                     <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
+                    {t("customerDelete")}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Customer</AlertDialogTitle>
+                    <AlertDialogTitle>{t("customerDeleteTitle")}</AlertDialogTitle>
                     <AlertDialogDescription>
                       This will permanently delete {customer.name} and all
                       associated data. This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t("customerDeleteCancel")}</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleDelete}
                       disabled={deleting}
                       className="bg-red-600 hover:bg-red-700"
                     >
-                      {deleting ? "Deleting..." : "Delete"}
+                      {deleting ? t("customerDeleting") : t("customerDelete")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -320,7 +322,7 @@ function CustomerDetailContent({ params }: PageProps) {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Customer Information</CardTitle>
+                <CardTitle>{t("customerInfoCard")}</CardTitle>
                 <div className="flex gap-2">
                   <Badge variant="outline">
                     {formatIndustrySector(customer.industry_sector)}
@@ -334,22 +336,13 @@ function CustomerDetailContent({ params }: PageProps) {
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <div>
-                  <Label className="text-muted-foreground">Company Name</Label>
+                  <Label className="text-muted-foreground">{t("customerCompanyName")}</Label>
                   <p className="font-medium mt-1">{customer.name}</p>
                 </div>
 
-                {customer.chinese_name && (
-                  <div>
-                    <Label className="text-muted-foreground">
-                      Chinese Name
-                    </Label>
-                    <p className="font-medium mt-1">{customer.chinese_name}</p>
-                  </div>
-                )}
-
                 <div>
                   <Label className="text-muted-foreground">
-                    Industry Sector
+                    {t("customerIndustry")}
                   </Label>
                   <p className="font-medium mt-1">
                     {formatIndustrySector(customer.industry_sector)}
@@ -358,7 +351,7 @@ function CustomerDetailContent({ params }: PageProps) {
 
                 <div>
                   <Label className="text-muted-foreground">
-                    Ownership Type
+                    {t("customerOwnership")}
                   </Label>
                   <p className="font-medium mt-1">
                     {formatOwnershipType(customer.ownership_type)}
@@ -369,7 +362,7 @@ function CustomerDetailContent({ params }: PageProps) {
                   customer.state_ownership_percentage !== null && (
                     <div>
                       <Label className="text-muted-foreground">
-                        State Ownership
+                        {t("customerStateOwnership")}
                       </Label>
                       <p className="font-medium mt-1">
                         {customer.state_ownership_percentage}%
@@ -380,7 +373,7 @@ function CustomerDetailContent({ params }: PageProps) {
                 <div>
                   <Label className="text-muted-foreground flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
-                    Headquarters
+                    {t("customerHQ")}
                   </Label>
                   <p className="font-medium mt-1">
                     {customer.headquarters_country}
@@ -391,7 +384,7 @@ function CustomerDetailContent({ params }: PageProps) {
 
                 {customer.us_presence && (
                   <div className="md:col-span-2 lg:col-span-3">
-                    <Label className="text-muted-foreground">US Presence</Label>
+                    <Label className="text-muted-foreground">{t("customerUSPresence")}</Label>
                     <p className="font-medium mt-1">{customer.us_presence}</p>
                   </div>
                 )}
@@ -399,7 +392,7 @@ function CustomerDetailContent({ params }: PageProps) {
                 {customer.us_subsidiary_name && (
                   <div>
                     <Label className="text-muted-foreground">
-                      US Subsidiary
+                      {t("customerUSSubsidiary")}
                     </Label>
                     <p className="font-medium mt-1">
                       {customer.us_subsidiary_name}
@@ -411,7 +404,7 @@ function CustomerDetailContent({ params }: PageProps) {
                   <div>
                     <Label className="text-muted-foreground flex items-center gap-1">
                       <Globe className="h-3 w-3" />
-                      Website
+                      {t("customerWebsite")}
                     </Label>
                     <a
                       href={customer.website}
@@ -425,14 +418,14 @@ function CustomerDetailContent({ params }: PageProps) {
                 )}
 
                 <div>
-                  <Label className="text-muted-foreground">Created</Label>
+                  <Label className="text-muted-foreground">{t("customerCreated")}</Label>
                   <p className="font-medium mt-1">
                     {formatDate(customer.created_at)}
                   </p>
                 </div>
 
                 <div>
-                  <Label className="text-muted-foreground">Last Updated</Label>
+                  <Label className="text-muted-foreground">{t("customerUpdated")}</Label>
                   <p className="font-medium mt-1">
                     {formatDate(customer.updated_at)}
                   </p>
@@ -443,7 +436,7 @@ function CustomerDetailContent({ params }: PageProps) {
                 <>
                   <Separator className="my-6" />
                   <div>
-                    <Label className="text-muted-foreground">Notes</Label>
+                    <Label className="text-muted-foreground">{t("customerNotes")}</Label>
                     <p className="mt-2 whitespace-pre-wrap">{customer.notes}</p>
                   </div>
                 </>
@@ -455,7 +448,7 @@ function CustomerDetailContent({ params }: PageProps) {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Recent Documents</CardTitle>
+                <CardTitle>{t("customerRecentDocs")}</CardTitle>
                 <Button
                   variant="outline"
                   size="sm"
@@ -464,7 +457,7 @@ function CustomerDetailContent({ params }: PageProps) {
                   }
                 >
                   <FileText className="mr-2 h-4 w-4" />
-                  View All Documents
+                  {t("customerViewAllDocs")}
                 </Button>
               </div>
             </CardHeader>
@@ -473,10 +466,10 @@ function CustomerDetailContent({ params }: PageProps) {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Filename</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Uploaded</TableHead>
+                      <TableHead>{t("customerDocFilename")}</TableHead>
+                      <TableHead>{t("customerDocType")}</TableHead>
+                      <TableHead>{t("customerDocStatus")}</TableHead>
+                      <TableHead>{t("customerDocUploaded")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -503,7 +496,7 @@ function CustomerDetailContent({ params }: PageProps) {
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <FileText className="mx-auto h-8 w-8 mb-2" />
-                  <p>No documents uploaded yet</p>
+                  <p>{t("customerNoDocsYet")}</p>
                   <Button
                     variant="outline"
                     size="sm"
@@ -512,7 +505,7 @@ function CustomerDetailContent({ params }: PageProps) {
                       router.push(`/customers/${resolvedParams.id}/documents`)
                     }
                   >
-                    Upload Documents
+                    {t("customerUploadDocs")}
                   </Button>
                 </div>
               )}
@@ -525,7 +518,7 @@ function CustomerDetailContent({ params }: PageProps) {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <ClipboardList className="h-5 w-5" />
-                  Assessments
+                  {t("customerAssessments")}
                   {assessments && assessments.total > 0 && (
                     <Badge variant="secondary" className="ml-1">
                       {assessments.total}
@@ -541,7 +534,7 @@ function CustomerDetailContent({ params }: PageProps) {
                   }
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  New Assessment
+                  {t("customerNewAssessment")}
                 </Button>
               </div>
             </CardHeader>
@@ -550,10 +543,10 @@ function CustomerDetailContent({ params }: PageProps) {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Modules</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead>Submitted</TableHead>
+                      <TableHead>{t("customerAssessmentStatus")}</TableHead>
+                      <TableHead>{t("customerAssessmentModules")}</TableHead>
+                      <TableHead>{t("customerAssessmentCreated")}</TableHead>
+                      <TableHead>{t("customerAssessmentSubmitted")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -582,7 +575,7 @@ function CustomerDetailContent({ params }: PageProps) {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-muted-foreground">
-                          {a.modules_completed}/10 modules
+                          {a.modules_completed}/10 {t("customerAssessmentModulesOf")}
                         </TableCell>
                         <TableCell className="text-muted-foreground">
                           {formatDate(a.created_at)}
@@ -597,7 +590,7 @@ function CustomerDetailContent({ params }: PageProps) {
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <ClipboardList className="mx-auto h-8 w-8 mb-2" />
-                  <p>No assessments yet</p>
+                  <p>{t("customerNoAssessments")}</p>
                   <Button
                     variant="outline"
                     size="sm"
@@ -609,7 +602,7 @@ function CustomerDetailContent({ params }: PageProps) {
                     }
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    Start Assessment
+                    {t("customerStartAssessment")}
                   </Button>
                 </div>
               )}
@@ -622,15 +615,15 @@ function CustomerDetailContent({ params }: PageProps) {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Customer</DialogTitle>
+            <DialogTitle>{t("customerEditTitle")}</DialogTitle>
             <DialogDescription>
-              Update the customer information below
+              {t("customerEditDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="edit-name">Company Name</Label>
+                <Label htmlFor="edit-name">{t("customerCompanyName")}</Label>
                 <Input
                   id="edit-name"
                   value={formData.name || ""}
@@ -644,16 +637,7 @@ function CustomerDetailContent({ params }: PageProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="edit-chinese_name">Chinese Name</Label>
-                <Input
-                  id="edit-chinese_name"
-                  value={formData.chinese_name || ""}
-                  onChange={(e) => updateField("chinese_name", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="edit-industry_sector">Industry Sector</Label>
+                <Label htmlFor="edit-industry_sector">{t("customerIndustry")}</Label>
                 <Select
                   value={formData.industry_sector}
                   onValueChange={(val) =>
@@ -674,7 +658,7 @@ function CustomerDetailContent({ params }: PageProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="edit-ownership_type">Ownership Type</Label>
+                <Label htmlFor="edit-ownership_type">{t("customerOwnership")}</Label>
                 <Select
                   value={formData.ownership_type}
                   onValueChange={(val) =>
@@ -698,7 +682,7 @@ function CustomerDetailContent({ params }: PageProps) {
             {showStateOwnership && (
               <div className="space-y-2">
                 <Label htmlFor="edit-state_ownership_percentage">
-                  State Ownership Percentage (%)
+                  {t("customerStateOwnershipPct")}
                 </Label>
                 <Input
                   id="edit-state_ownership_percentage"
@@ -724,7 +708,7 @@ function CustomerDetailContent({ params }: PageProps) {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="edit-headquarters_country">
-                  Headquarters Country
+                  {t("customerHQCountry")}
                 </Label>
                 <Input
                   id="edit-headquarters_country"
@@ -742,7 +726,7 @@ function CustomerDetailContent({ params }: PageProps) {
 
               <div className="space-y-2">
                 <Label htmlFor="edit-headquarters_city">
-                  Headquarters City
+                  {t("customerHQCity")}
                 </Label>
                 <Input
                   id="edit-headquarters_city"
@@ -755,7 +739,7 @@ function CustomerDetailContent({ params }: PageProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-us_presence">US Presence</Label>
+              <Label htmlFor="edit-us_presence">{t("customerUSPresence")}</Label>
               <Textarea
                 id="edit-us_presence"
                 value={formData.us_presence || ""}
@@ -766,7 +750,7 @@ function CustomerDetailContent({ params }: PageProps) {
 
             <div className="space-y-2">
               <Label htmlFor="edit-us_subsidiary_name">
-                US Subsidiary Name
+                {t("customerUSSubsidiaryName")}
               </Label>
               <Input
                 id="edit-us_subsidiary_name"
@@ -778,7 +762,7 @@ function CustomerDetailContent({ params }: PageProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-website">Website</Label>
+              <Label htmlFor="edit-website">{t("customerWebsite")}</Label>
               <Input
                 id="edit-website"
                 type="url"
@@ -793,7 +777,7 @@ function CustomerDetailContent({ params }: PageProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-notes">Notes</Label>
+              <Label htmlFor="edit-notes">{t("customerNotes")}</Label>
               <Textarea
                 id="edit-notes"
                 value={formData.notes || ""}
@@ -808,11 +792,11 @@ function CustomerDetailContent({ params }: PageProps) {
               onClick={() => setEditDialogOpen(false)}
               disabled={updating}
             >
-              Cancel
+              {t("customerDeleteCancel")}
             </Button>
             <Button onClick={handleUpdate} disabled={updating}>
               <Save className="mr-2 h-4 w-4" />
-              {updating ? "Saving..." : "Save Changes"}
+              {updating ? t("customerEditSaving") : t("customerEditSave")}
             </Button>
           </DialogFooter>
         </DialogContent>

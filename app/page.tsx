@@ -1,367 +1,236 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Header } from "@/components/header";
-import {
-  CheckCircle2,
-  Shield,
-  Users,
-  FileText,
-  TrendingUp,
-  Lock,
-} from "lucide-react";
 import Link from "next/link";
-import { useLanguage } from "@/lib/language-context";
+import { Shield, Activity, FileText } from "lucide-react";
 
 export default function HomePage() {
-  const { t } = useLanguage();
-
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-[#f0ebe0] font-sans">
+      {/* Header */}
+      <header className="flex items-center justify-between px-8 py-5">
+        <Link
+          href="/company/login"
+          className="border border-[#1a1f2e] text-[#1a1f2e] text-sm font-medium px-5 py-2 rounded hover:bg-[#1a1f2e] hover:text-white transition-colors"
+        >
+          Login
+        </Link>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/95 to-accent py-20 sm:py-32 pb-12">
-        <div className="absolute inset-0 bg-[url('/abstract-professional-pattern.png')] opacity-5" />
-        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-            <div className="space-y-8">
-              <div className="inline-flex items-center rounded-full bg-background/10 backdrop-blur-sm px-4 py-2 text-sm text-primary-foreground">
-                <Shield className="mr-2 h-4 w-4" />
-                {t("trustedBy")}
+        <nav className="flex items-center gap-8">
+          <Link href="/about" className="text-sm text-[#1a1f2e] hover:opacity-70 transition-opacity">
+            About
+          </Link>
+          <Link href="/use-cases" className="text-sm text-[#1a1f2e] hover:opacity-70 transition-opacity">
+            Use Cases
+          </Link>
+          <Link href="/company/login" className="text-sm text-[#1a1f2e] hover:opacity-70 transition-opacity">
+            My Reports
+          </Link>
+        </nav>
+
+        <span className="text-base font-bold tracking-widest text-[#1a1f2e]">TBRAC AI</span>
+      </header>
+
+      {/* Hero */}
+      <section
+        className="mx-4 sm:mx-8 rounded-2xl overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #1a1f2e 0%, #1e2a3a 50%, #2a3040 100%)",
+          minHeight: 420,
+        }}
+      >
+        <div className="flex flex-col items-center justify-center text-center px-6 py-20 sm:py-28 relative">
+          {/* Pill badge */}
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#c9a647]/40 bg-[#c9a647]/10 px-4 py-1.5">
+            <span className="text-xs font-semibold tracking-widest text-[#c9a647] uppercase">
+              Compliance Intelligence
+            </span>
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight max-w-2xl">
+            Assess US Market Entry<br />
+            Readiness with{" "}
+            <span className="text-[#c9a647]">Confidence</span>
+          </h1>
+
+          <p className="mt-6 text-base text-white/60 max-w-xl leading-relaxed">
+            TBRAC intelligence tool helps compliance analysts evaluate company
+            readiness through automated screening, risk scoring, and
+            comprehensive reporting.
+          </p>
+
+          <div className="mt-10 flex items-center gap-4">
+            <Link
+              href="/company/login"
+              className="flex items-center gap-2 bg-[#c9a647] hover:bg-[#b8923a] text-[#1a1f2e] font-semibold text-sm px-6 py-3 rounded-lg transition-colors"
+            >
+              Create New Assessment
+              <span className="text-base">→</span>
+            </Link>
+            <Link
+              href="/company/login"
+              className="border border-white/30 text-white text-sm font-medium px-6 py-3 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              Login
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Cards */}
+      <section className="mx-4 sm:mx-8 mt-6 grid gap-4 sm:grid-cols-3">
+        {[
+          {
+            icon: Shield,
+            title: "Automated Screening",
+            desc: "Instantly vet companies against thousands of compliance databases and watchlists with real-time updates.",
+          },
+          {
+            icon: Activity,
+            title: "Risk Scoring",
+            desc: "Proprietary algorithms calculate a precise readiness score, highlighting critical gaps before they become blockers.",
+          },
+          {
+            icon: FileText,
+            title: "Comprehensive Reporting",
+            desc: "Generate detailed PDF reports for stakeholders with actionable insights and clear remediation steps.",
+          },
+        ].map(({ icon: Icon, title, desc }) => (
+          <div
+            key={title}
+            className="bg-white rounded-2xl p-7 flex flex-col gap-4 shadow-sm border border-[#e8e2d6]"
+          >
+            <div className="h-9 w-9 rounded-lg bg-[#f0ebe0] flex items-center justify-center">
+              <Icon className="h-5 w-5 text-[#1a1f2e]" strokeWidth={1.5} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-[#1a1f2e] text-base">{title}</h3>
+              <p className="mt-2 text-sm text-[#6b6457] leading-relaxed">{desc}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* Data-Driven Section */}
+      <section className="mx-4 sm:mx-8 mt-6 rounded-2xl bg-[#eae4d8] border border-[#ddd6c8] overflow-hidden">
+        <div className="grid lg:grid-cols-2 items-center gap-0">
+          {/* Left copy */}
+          <div className="p-10 sm:p-14 space-y-6">
+            <h2 className="text-3xl font-bold text-[#1a1f2e] leading-snug">
+              Data-Driven Decisions
+            </h2>
+            <p className="text-sm text-[#6b6457] leading-relaxed max-w-sm">
+              Navigate the complex landscape of US market regulations. Our tool
+              simplifies the compliance journey from initial assessment to final
+              approval.
+            </p>
+            <div className="flex gap-4 pt-2">
+              <div className="bg-white rounded-xl px-6 py-4 shadow-sm border border-[#ddd6c8]">
+                <p className="text-2xl font-bold text-[#1a1f2e]">99.9%</p>
+                <p className="text-xs text-[#6b6457] uppercase tracking-widest mt-1">
+                  Accuracy Rate
+                </p>
               </div>
-
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-primary-foreground text-balance leading-tight">
-                {t("heroTitle")}
-              </h1>
-
-              <p className="text-lg sm:text-xl text-primary-foreground/90 leading-relaxed max-w-2xl">
-                {t("heroDescription")}
-              </p>
-
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button
-                    size="lg"
-                    asChild
-                    className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-lg px-8 py-6"
-                  >
-                    <Link href="/assessment/start">{t("startAssessment")}</Link>
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    asChild
-                    className="bg-background/10 backdrop-blur-sm text-primary-foreground border-primary-foreground/20 hover:bg-background/20 text-lg px-8 py-6"
-                  >
-                    <Link href="/company/login">Sign In</Link>
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    asChild
-                    className="bg-background/10 backdrop-blur-sm text-primary-foreground border-primary-foreground/20 hover:bg-background/20 text-lg px-8 py-6"
-                  >
-                    <Link href="/about">{t("learnMore")}</Link>
-                  </Button>
-                </div>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  asChild
-                  className="bg-transparent backdrop-blur-sm text-primary-foreground border-primary-foreground/30 hover:bg-background/10 text-base px-6 py-4 w-fit"
-                >
-                  <Link href="/recalculate">
-                    {t("recalculateExistingReport")}
-                  </Link>
-                </Button>
+              <div className="bg-white rounded-xl px-6 py-4 shadow-sm border border-[#ddd6c8]">
+                <p className="text-2xl font-bold text-[#1a1f2e]">10x</p>
+                <p className="text-xs text-[#6b6457] uppercase tracking-widest mt-1">
+                  Faster Analysis
+                </p>
               </div>
             </div>
+          </div>
 
-            {/* Score Preview Card */}
-            <div className="relative">
-              <Card className="bg-background shadow-2xl border-0">
-                <CardContent className="p-8 sm:p-12">
-                  <div className="space-y-6">
-                    <div className="text-center space-y-4">
-                      <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                        {t("tbracCompositeScore")}
-                      </div>
-                      <div className="text-7xl sm:text-8xl font-bold text-foreground">
-                        96
-                      </div>
-                      <div className="space-y-2">
-                        <div className="text-lg font-semibold text-secondary">
-                          {t("congratsBoost")}
-                        </div>
-                        <div className="text-2xl font-bold text-foreground">
-                          {t("excellent")}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="relative h-3 rounded-full bg-muted overflow-hidden">
+          {/* Right — mock dashboard card */}
+          <div className="p-8 flex items-center justify-center">
+            <div
+              className="w-full max-w-sm rounded-2xl overflow-hidden shadow-xl"
+              style={{ background: "#1a1f2e" }}
+            >
+              {/* Top bar */}
+              <div className="px-5 py-3 flex items-center justify-between border-b border-white/10">
+                <div>
+                  <p className="text-xs text-white/50">Company</p>
+                  <p className="text-sm font-semibold text-white">Nicutization Datun</p>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-white/50">
+                  <span>Market Risk</span>
+                  <span className="text-[#c9a647]">Score</span>
+                  <span>Excellent</span>
+                  <span>↑↓</span>
+                </div>
+              </div>
+              {/* Chart area */}
+              <div className="px-5 py-5">
+                <div className="flex items-end gap-1.5 h-20 mb-3">
+                  {[40, 55, 35, 65, 50, 75, 60, 80, 70, 85, 65, 90].map((h, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 rounded-sm"
+                      style={{
+                        height: `${h}%`,
+                        background:
+                          i === 11
+                            ? "#c9a647"
+                            : i >= 8
+                            ? "rgba(201,166,71,0.5)"
+                            : "rgba(255,255,255,0.15)",
+                      }}
+                    />
+                  ))}
+                </div>
+                {/* Sparkline */}
+                <svg viewBox="0 0 200 30" className="w-full h-6" preserveAspectRatio="none">
+                  <polyline
+                    points="0,25 20,20 40,22 60,15 80,18 100,10 120,13 140,8 160,6 180,4 200,2"
+                    fill="none"
+                    stroke="#c9a647"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              {/* Stats row */}
+              <div className="px-5 pb-5 grid grid-cols-3 gap-2 text-xs text-white/50">
+                {["Attrition 5% Incertations area", "Company", "Compliance"].map((label) => (
+                  <div key={label} className="bg-white/5 rounded p-2">
+                    <p className="text-white/30 text-[10px] mb-1">{label}</p>
+                    <div className="h-1 bg-white/10 rounded-full overflow-hidden">
                       <div
-                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-destructive via-secondary to-accent rounded-full"
-                        style={{ width: "96%" }}
+                        className="h-full bg-[#c9a647]/60 rounded-full"
+                        style={{ width: `${Math.random() * 60 + 40}%` }}
                       />
                     </div>
-
-                    <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>0</span>
-                      <span className="text-xs underline">
-                        {t("sampleScore")}
-                      </span>
-                      <span>100</span>
-                    </div>
-
-                    <div className="flex gap-3 pt-2">
-                      <div className="flex-1 text-center py-2 px-3 text-xs font-medium text-muted-foreground border border-border rounded-md bg-muted/50">
-                        {t("downloadYourEvaluation")}
-                      </div>
-                      <div className="flex-1 text-center py-2 px-3 text-xs font-medium text-muted-foreground border border-border rounded-md bg-muted/20">
-                        {t("shareYourEvaluation")}
-                      </div>
-                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-
-        {/* Disclaimer text - positioned at bottom right */}
-        <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8">
-          <p className="text-xs text-primary-foreground/50 whitespace-nowrap">
-            {t("usMarketDisclaimer")}
-          </p>
-        </div>
-      </section>
-
-      {/* Trust Indicators */}
-      <section className="py-16 bg-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <CheckCircle2 className="h-8 w-8 text-accent" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg mb-2 text-foreground">
-                  {t("trustIndicator1")}
-                </h3>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <CheckCircle2 className="h-8 w-8 text-accent" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg mb-2 text-foreground">
-                  {t("trustIndicator2")}
-                </h3>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <CheckCircle2 className="h-8 w-8 text-accent" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg mb-2 text-foreground">
-                  {t("trustIndicator3")}
-                </h3>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Features Section */}
-      <section className="py-20 sm:py-32">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground text-balance">
-              {t("frameworkTitle")}
-            </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              {t("frameworkDescription")}
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                icon: Shield,
-                title: t("regulatoryScrutiny"),
-                description: t("regulatoryDesc"),
-              },
-              {
-                icon: TrendingUp,
-                title: t("politicalRisk"),
-                description: t("politicalDesc"),
-              },
-              {
-                icon: Lock,
-                title: t("dataSecurityRisk"),
-                description: t("dataSecurityDesc"),
-              },
-              {
-                icon: FileText,
-                title: t("ipProtection"),
-                description: t("ipDesc"),
-              },
-              {
-                icon: Users,
-                title: t("reputationalRisk"),
-                description: t("reputationalDesc"),
-              },
-              {
-                icon: Shield,
-                title: t("nationalSecurity"),
-                description: t("nationalSecurityDesc"),
-              },
-            ].map((feature, index) => (
-              <Card
-                key={index}
-                className="border-border hover:border-accent transition-colors"
-              >
-                <CardContent className="p-6 space-y-4">
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <feature.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground">
-                    {feature.title}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-primary">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-primary-foreground text-balance">
-              {t("ctaTitle")}
-            </h2>
-            <p className="text-lg sm:text-xl text-primary-foreground/90 leading-relaxed">
-              {t("ctaDescription")}
-            </p>
-            <Button
-              size="lg"
-              asChild
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-lg px-8 py-6"
-            >
-              <Link href="/assessment/start">{t("beginAssessment")}</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="border-t border-border py-12 bg-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">
-                {t("tbracReports")}
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("footerDescription")}
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">
-                {t("resources")}
-              </h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/methodology"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {t("methodology")}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/case-studies"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {t("caseStudies")}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/faq"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {t("faq")}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">{t("company")}</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/about"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {t("aboutUs")}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/contact"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {t("contact")}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">{t("legal")}</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/privacy"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {t("privacyPolicy")}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {t("termsOfService")}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>
-              &copy; {new Date().getFullYear()} {t("allRightsReserved")}
-            </p>
-          </div>
-        </div>
+      <footer className="mx-4 sm:mx-8 mt-6 mb-8 border-t border-[#ddd6c8] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-xs text-[#9b9183]">
+          © {new Date().getFullYear()} TBRAC AI. All rights reserved.
+        </p>
+        <nav className="flex items-center gap-6">
+          <Link href="/about" className="text-xs text-[#6b6457] hover:text-[#1a1f2e] transition-colors">
+            About
+          </Link>
+          <Link href="/use-cases" className="text-xs text-[#6b6457] hover:text-[#1a1f2e] transition-colors">
+            Use Cases
+          </Link>
+          <Link href="/privacy" className="text-xs text-[#6b6457] hover:text-[#1a1f2e] transition-colors">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="text-xs text-[#6b6457] hover:text-[#1a1f2e] transition-colors">
+            Terms of Use
+          </Link>
+          <Link
+            href="/evaluator-login"
+            className="text-xs font-medium text-[#1a1f2e] border border-[#1a1f2e] px-3 py-1.5 rounded hover:bg-[#1a1f2e] hover:text-white transition-colors"
+          >
+            Evaluator Login
+          </Link>
+        </nav>
       </footer>
     </div>
   );

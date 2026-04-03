@@ -163,7 +163,7 @@ function DashboardContent() {
 
   const handleLogout = async () => {
     await signOut();
-    router.push("/evaluator-login");
+    router.push("/");
   };
 
   const getStatusBadge = (status: string) => {

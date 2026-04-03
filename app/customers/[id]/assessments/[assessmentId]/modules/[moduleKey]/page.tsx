@@ -42,6 +42,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { formatFileSize, formatDate } from "@/lib/format-utils";
+import { useLanguage } from "@/lib/language-context";
 
 interface PageProps {
   params: Promise<{
@@ -56,12 +57,18 @@ function QuestionSlider({
   value,
   onChange,
   disabled,
+  language,
 }: {
   question: Question;
   value: number;
   onChange: (v: number) => void;
   disabled: boolean;
+  language: string;
 }) {
+  const text = language === "zh" ? question.text_zh : question.text;
+  const anchorLow = language === "zh" ? question.anchor_low_zh : question.anchor_low;
+  const anchorHigh = language === "zh" ? question.anchor_high_zh : question.anchor_high;
+
   return (
     <div className="space-y-3 py-4 border-b last:border-b-0">
       <div className="flex items-start gap-2">
@@ -69,14 +76,14 @@ function QuestionSlider({
           {question.id.split("_")[1].toUpperCase()}
         </span>
         <div className="flex-1 space-y-1">
-          <p className="text-sm font-medium leading-snug">{question.text}</p>
+          <p className="text-sm font-medium leading-snug">{text}</p>
           {question.document_hint && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
                     <Info className="h-3 w-3" />
-                    Document hint
+                    {language === "zh" ? "文件提示" : "Document hint"}
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="right" className="max-w-xs">
@@ -99,8 +106,8 @@ function QuestionSlider({
           className="w-full"
         />
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span className="max-w-[45%] leading-tight">{question.anchor_low}</span>
-          <span className="max-w-[45%] text-right leading-tight">{question.anchor_high}</span>
+          <span className="max-w-[45%] leading-tight">{anchorLow}</span>
+          <span className="max-w-[45%] text-right leading-tight">{anchorHigh}</span>
         </div>
       </div>
     </div>
@@ -110,6 +117,7 @@ function QuestionSlider({
 function ModulePageContent({ params }: PageProps) {
   const { id: customerId, assessmentId, moduleKey } = use(params);
   const router = useRouter();
+  const { t, language } = useLanguage();
   const { data: moduleData, loading, error, refetch } = useAssessmentModule(
     assessmentId,
     moduleKey,
@@ -163,6 +171,10 @@ function ModulePageContent({ params }: PageProps) {
       });
       showSuccess(complete ? "Module completed" : "Progress saved");
       setIsDirty(false);
+      if (complete) {
+        router.push(`/customers/${customerId}/assessments/${assessmentId}`);
+        return;
+      }
       refetch();
     } catch (err) {
       handleError(err);
@@ -265,11 +277,11 @@ function ModulePageContent({ params }: PageProps) {
             </Button>
             <div className="flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl font-bold">{moduleDef.name}</h1>
+                <h1 className="text-2xl font-bold">{language === "zh" ? moduleDef.name_zh : moduleDef.name}</h1>
                 {isCompleted && (
                   <Badge className="bg-green-600 text-white">
                     <CheckCircle2 className="mr-1 h-3 w-3" />
-                    Completed
+                    {t("assessmentModuleCompleted")}
                   </Badge>
                 )}
                 {moduleData?.score !== null && moduleData?.score !== undefined && (
@@ -279,7 +291,7 @@ function ModulePageContent({ params }: PageProps) {
                 )}
               </div>
               <p className="text-muted-foreground text-sm mt-0.5">
-                Module {moduleDef.number} · {moduleDef.description}
+                Module {moduleDef.number} · {language === "zh" ? moduleDef.description_zh : moduleDef.description}
               </p>
             </div>
           </div>
@@ -291,11 +303,10 @@ function ModulePageContent({ params }: PageProps) {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base">
-                    Risk Assessment Questions
+                    {t("moduleRiskQuestionsTitle")}
                   </CardTitle>
                   <CardDescription>
-                    Rate each criterion from 0 (highest risk) to 10 (lowest
-                    risk)
+                    {t("moduleRiskQuestionsDesc")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-2">
@@ -309,6 +320,7 @@ function ModulePageContent({ params }: PageProps) {
                         setIsDirty(true);
                       }}
                       disabled={isCompleted}
+                      language={language}
                     />
                   ))}
                 </CardContent>
@@ -317,9 +329,9 @@ function ModulePageContent({ params }: PageProps) {
               {/* Analyst Notes */}
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Analyst Notes</CardTitle>
+                  <CardTitle className="text-base">{t("moduleAnalystNotesTitle")}</CardTitle>
                   <CardDescription>
-                    Optional notes or observations for this module
+                    {t("moduleAnalystNotesDesc")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -329,7 +341,7 @@ function ModulePageContent({ params }: PageProps) {
                       setAnalystNotes(e.target.value);
                       setIsDirty(true);
                     }}
-                    placeholder="Add notes about this module's risk assessment..."
+                    placeholder={t("moduleAnalystNotesPlaceholder")}
                     rows={4}
                     disabled={isCompleted}
                   />
@@ -349,7 +361,7 @@ function ModulePageContent({ params }: PageProps) {
                     ) : (
                       <Save className="mr-2 h-4 w-4" />
                     )}
-                    Save Progress
+                    {saving ? t("moduleSaving") : t("moduleSaveProgress")}
                   </Button>
                   <Button
                     onClick={() => handleSave(true)}
@@ -360,11 +372,11 @@ function ModulePageContent({ params }: PageProps) {
                     ) : (
                       <CheckCircle2 className="mr-2 h-4 w-4" />
                     )}
-                    Complete Module
+                    {t("moduleCompleteModule")}
                   </Button>
                   {!allAnswered && (
                     <p className="text-xs text-muted-foreground">
-                      Answer all questions to complete
+                      {t("moduleAnswerAllMsg")}
                     </p>
                   )}
                 </div>
@@ -377,10 +389,10 @@ function ModulePageContent({ params }: PageProps) {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base flex items-center gap-2">
                     <FileText className="h-4 w-4" />
-                    Document Vault
+                    {t("moduleDocVaultTitle")}
                   </CardTitle>
                   <CardDescription>
-                    Upload supporting documents for this module
+                    {t("moduleDocVaultDesc")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -388,7 +400,7 @@ function ModulePageContent({ params }: PageProps) {
                   {moduleDef.document_types.length > 0 && (
                     <div className="rounded-lg bg-muted/50 p-3 space-y-1.5">
                       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                        Recommended
+                        {t("moduleRecommendedDocs")}
                       </p>
                       <ul className="space-y-1">
                         {moduleDef.document_types.map((dt) => (
@@ -425,16 +437,16 @@ function ModulePageContent({ params }: PageProps) {
                     {uploading ? (
                       <div className="flex items-center justify-center gap-2 text-muted-foreground">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <span className="text-sm">Uploading...</span>
+                        <span className="text-sm">{t("moduleUploading")}</span>
                       </div>
                     ) : (
                       <>
                         <Upload className="mx-auto h-6 w-6 text-muted-foreground mb-2" />
                         <p className="text-sm text-muted-foreground">
-                          Click or drag files to upload
+                          {t("moduleClickOrDrag")}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          PDF, Word, Excel, Images
+                          {t("moduleFileTypes")}
                         </p>
                       </>
                     )}
@@ -445,7 +457,7 @@ function ModulePageContent({ params }: PageProps) {
                     <div className="space-y-2">
                       <Separator />
                       <Label className="text-xs text-muted-foreground uppercase tracking-wide">
-                        Uploaded ({moduleDocs.length})
+                        {t("moduleUploadedCount")} ({moduleDocs.length})
                       </Label>
                       {moduleDocs.map((doc) => (
                         <div
@@ -485,7 +497,7 @@ function ModulePageContent({ params }: PageProps) {
                     </div>
                   ) : (
                     <p className="text-center text-xs text-muted-foreground py-2">
-                      No documents uploaded yet
+                      {t("moduleNoDocsYet")}
                     </p>
                   )}
                 </CardContent>

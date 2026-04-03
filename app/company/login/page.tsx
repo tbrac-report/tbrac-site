@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Building2, Mail, Lock, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -50,6 +51,7 @@ type SignupForm = z.infer<typeof signupSchema>;
 export default function CompanyLoginPage() {
   const router = useRouter();
   const { user, signIn } = useAuth();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -123,18 +125,18 @@ export default function CompanyLoginPage() {
               </div>
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              Welcome Back
+              {t("loginWelcome")}
             </h1>
             <p className="text-muted-foreground">
-              Sign in to access your assessment and documents
+              {t("loginSubtitle")}
             </p>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Sign In</CardTitle>
+              <CardTitle>{t("loginCardTitle")}</CardTitle>
               <CardDescription>
-                Enter your credentials to continue
+                {t("loginCardDesc")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -143,7 +145,6 @@ export default function CompanyLoginPage() {
                   <p className="text-sm text-destructive">{error}</p>
                 </div>
               )}
-              (
               <Form {...loginForm}>
                 <form
                   onSubmit={loginForm.handleSubmit(handleLogin)}
@@ -154,7 +155,7 @@ export default function CompanyLoginPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Address</FormLabel>
+                        <FormLabel>{t("loginEmail")}</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -176,7 +177,7 @@ export default function CompanyLoginPage() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>{t("loginPassword")}</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -194,18 +195,17 @@ export default function CompanyLoginPage() {
                   />
 
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Signing in..." : "Sign In"}
+                    {isLoading ? t("loginSigningIn") : t("loginSubmit")}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </form>
               </Form>
-              )
             </CardContent>
           </Card>
 
           <div className="text-center">
             <Button variant="ghost" onClick={() => router.push("/")}>
-              Back to Home
+              {t("loginBackHome")}
             </Button>
           </div>
         </div>

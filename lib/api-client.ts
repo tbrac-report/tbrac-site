@@ -291,6 +291,18 @@ export const api = {
       ),
   },
 
+  // Chat
+  chat: {
+    stream: async (assessmentId: string, messages: {role: string, content: string}[], language: string): Promise<Response> => {
+      const headers = await getAuthHeaders();
+      return fetch(`${API_BASE_URL}/api/v1/chat`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ assessment_id: assessmentId, messages, language }),
+      });
+    }
+  },
+
   // Document upload with optional module association
   moduleDocuments: {
     upload: async (
