@@ -59,7 +59,9 @@ export interface CustomerBase {
   notes?: string;
 }
 
-export interface CustomerCreate extends CustomerBase {}
+export interface CustomerCreate extends Partial<CustomerBase> {
+  name: string;
+}
 
 export interface CustomerUpdate extends Partial<CustomerBase> {}
 

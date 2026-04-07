@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/lib/auth-context";
+import { api } from "@/lib/api-client";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Mail, Lock, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
 
@@ -36,7 +38,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 const signupSchema = z
   .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    companyName: z.string().min(2, "Company name must be at least 2 characters"),
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
@@ -50,27 +52,19 @@ type SignupForm = z.infer<typeof signupSchema>;
 
 export default function CompanyLoginPage() {
   const router = useRouter();
-  const { user, signIn } = useAuth();
+  const { user, signIn, signUp } = useAuth();
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loginForm = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
   const signupForm = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues: { companyName: "", email: "", password: "", confirmPassword: "" },
   });
 
   // Redirect if already logged in
@@ -83,7 +77,6 @@ export default function CompanyLoginPage() {
   const handleLogin = async (data: LoginForm) => {
     setIsLoading(true);
     setError(null);
-
     try {
       await signIn(data.email, data.password);
       router.push("/company/profile");
@@ -97,10 +90,18 @@ export default function CompanyLoginPage() {
   const handleSignup = async (data: SignupForm) => {
     setIsLoading(true);
     setError(null);
-
     try {
       await signUp(data.email, data.password);
-      router.push("/assessment/start");
+
+      // Wait briefly for the session to be set after signup
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      // Create the customer record for this user
+      const customer = await api.customers.create({
+        name: data.companyName,
+      });
+
+      router.push(`/customers/${customer.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create account");
     } finally {
@@ -108,9 +109,7 @@ export default function CompanyLoginPage() {
     }
   };
 
-  if (user) {
-    return null;
-  }
+  if (user) return null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -127,79 +126,143 @@ export default function CompanyLoginPage() {
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
               {t("loginWelcome")}
             </h1>
-            <p className="text-muted-foreground">
-              {t("loginSubtitle")}
-            </p>
+            <p className="text-muted-foreground">{t("loginSubtitle")}</p>
           </div>
 
           <Card>
-            <CardHeader>
-              <CardTitle>{t("loginCardTitle")}</CardTitle>
-              <CardDescription>
-                {t("loginCardDesc")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               {error && (
                 <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
                   <p className="text-sm text-destructive">{error}</p>
                 </div>
               )}
-              <Form {...loginForm}>
-                <form
-                  onSubmit={loginForm.handleSubmit(handleLogin)}
-                  className="space-y-4"
-                >
-                  <FormField
-                    control={loginForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("loginEmail")}</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              type="email"
-                              placeholder="you@company.com"
-                              className="pl-10"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
 
-                  <FormField
-                    control={loginForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("loginPassword")}</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              type="password"
-                              placeholder="••••••••"
-                              className="pl-10"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <Tabs defaultValue="login">
+                <TabsList className="w-full mb-6">
+                  <TabsTrigger value="login" className="flex-1">Sign In</TabsTrigger>
+                  <TabsTrigger value="signup" className="flex-1">Create Account</TabsTrigger>
+                </TabsList>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? t("loginSigningIn") : t("loginSubmit")}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </form>
-              </Form>
+                {/* Login tab */}
+                <TabsContent value="login">
+                  <Form {...loginForm}>
+                    <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
+                      <FormField
+                        control={loginForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("loginEmail")}</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input type="email" placeholder="you@company.com" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={loginForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("loginPassword")}</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? t("loginSigningIn") : t("loginSubmit")}
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </form>
+                  </Form>
+                </TabsContent>
+
+                {/* Sign up tab */}
+                <TabsContent value="signup">
+                  <Form {...signupForm}>
+                    <form onSubmit={signupForm.handleSubmit(handleSignup)} className="space-y-4">
+                      <FormField
+                        control={signupForm.control}
+                        name="companyName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Company Name</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input placeholder="Acme Corp" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={signupForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input type="email" placeholder="you@company.com" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={signupForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={signupForm.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Confirm Password</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? "Creating account..." : "Create Account"}
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </form>
+                  </Form>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
 
