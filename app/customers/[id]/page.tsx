@@ -159,9 +159,6 @@ function CustomerDetailContent({ params }: PageProps) {
       }
     }
 
-    if (formData.website && !formData.website.match(/^https?:\/\/.+/)) {
-      errors.website = "Must be a valid URL starting with http:// or https://";
-    }
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -407,7 +404,7 @@ function CustomerDetailContent({ params }: PageProps) {
                       {t("customerWebsite")}
                     </Label>
                     <a
-                      href={customer.website}
+                      href={customer.website.match(/^https?:\/\//) ? customer.website : `https://${customer.website}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-medium mt-1 text-primary hover:underline flex items-center gap-1"

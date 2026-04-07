@@ -83,9 +83,6 @@ function NewCustomerContent() {
       }
     }
 
-    if (formData.website && !formData.website.match(/^https?:\/\/.+/)) {
-      errors.website = t("newCustomerErrWebsite");
-    }
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
