@@ -270,7 +270,7 @@ function CustomerDetailContent({ params }: PageProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => router.push("/customers")}
+                onClick={() => router.push("/company/profile")}
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>

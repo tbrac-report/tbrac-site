@@ -26,7 +26,7 @@ export function PortalHeader() {
   };
 
   const navLinks = [
-    { href: "/customers", label: t("portalCustomers"), icon: Users },
+    { href: "/company/profile", label: t("portalCustomers"), icon: Users },
   ];
 
   return (
@@ -34,7 +34,7 @@ export function PortalHeader() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/customers" className="flex items-center gap-3">
+            <Link href="/company/profile" className="flex items-center gap-3">
               <div className="relative h-10 w-10 rounded-full bg-primary flex items-center justify-center">
                 <Globe className="h-6 w-6 text-primary-foreground" />
               </div>

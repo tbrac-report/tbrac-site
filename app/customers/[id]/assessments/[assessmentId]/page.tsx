@@ -34,6 +34,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { AssessmentChatbot } from "@/components/assessment-chatbot";
+import { BreadcrumbNav } from "@/components/breadcrumb-nav";
 
 interface PageProps {
   params: Promise<{ id: string; assessmentId: string }>;
@@ -156,6 +157,10 @@ function AssessmentDashboardContent({ params }: PageProps) {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div>
+                <BreadcrumbNav crumbs={[
+                  { label: customer?.name ?? "Company", href: `/customers/${customerId}` },
+                  { label: t("assessmentTitle") },
+                ]} />
                 <h1 className="text-3xl font-bold">{t("assessmentTitle")}</h1>
                 {customer && (
                   <p className="text-muted-foreground mt-1">{customer.name}</p>
@@ -261,13 +266,11 @@ function AssessmentDashboardContent({ params }: PageProps) {
                       : status === "in_progress"
                         ? "border-yellow-200 bg-yellow-50/20"
                         : "hover:border-primary/30"
-                  } ${isSubmitted ? "cursor-default" : ""}`}
+                  }`}
                   onClick={() => {
-                    if (!isSubmitted) {
-                      router.push(
-                        `/customers/${customerId}/assessments/${assessmentId}/modules/${mod.key}`,
-                      );
-                    }
+                    router.push(
+                      `/customers/${customerId}/assessments/${assessmentId}/modules/${mod.key}`,
+                    );
                   }}
                 >
                   <CardHeader className="pb-2">
@@ -278,9 +281,7 @@ function AssessmentDashboardContent({ params }: PageProps) {
                           {t("assessmentModulePrefix")} {mod.number}
                         </span>
                       </div>
-                      {!isSubmitted && (
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                      )}
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </div>
                     <CardTitle className="text-base leading-tight mt-1">
                       {language === "zh" ? mod.name_zh : mod.name}

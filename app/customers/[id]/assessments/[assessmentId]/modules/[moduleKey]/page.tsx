@@ -43,6 +43,8 @@ import {
 } from "@/components/ui/tooltip";
 import { formatFileSize, formatDate } from "@/lib/format-utils";
 import { useLanguage } from "@/lib/language-context";
+import { BreadcrumbNav } from "@/components/breadcrumb-nav";
+import { useCustomer } from "@/hooks/use-customers";
 
 interface PageProps {
   params: Promise<{
@@ -118,6 +120,7 @@ function ModulePageContent({ params }: PageProps) {
   const { id: customerId, assessmentId, moduleKey } = use(params);
   const router = useRouter();
   const { t, language } = useLanguage();
+  const { data: customer } = useCustomer(customerId);
   const { data: moduleData, loading, error, refetch } = useAssessmentModule(
     assessmentId,
     moduleKey,
@@ -276,6 +279,11 @@ function ModulePageContent({ params }: PageProps) {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="flex-1">
+              <BreadcrumbNav crumbs={[
+                { label: customer?.name ?? "Company", href: `/customers/${customerId}` },
+                { label: t("assessmentTitle"), href: `/customers/${customerId}/assessments/${assessmentId}` },
+                { label: language === "zh" ? moduleDef.name_zh : moduleDef.name },
+              ]} />
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-2xl font-bold">{language === "zh" ? moduleDef.name_zh : moduleDef.name}</h1>
                 {isCompleted && (
