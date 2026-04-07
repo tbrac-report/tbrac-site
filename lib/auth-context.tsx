@@ -55,11 +55,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     })
     if (error) throw error
+    if (!data.session) {
+      throw new Error("Please disable email confirmation in Supabase dashboard (Authentication → Providers → Email → Confirm email: off), then try again.")
+    }
   }
 
   const signOut = async () => {

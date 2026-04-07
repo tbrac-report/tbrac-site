@@ -22,7 +22,7 @@ export function PortalHeader() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.push("/company/login");
+    router.push("/");
   };
 
   const navLinks = [

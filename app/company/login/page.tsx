@@ -93,10 +93,7 @@ export default function CompanyLoginPage() {
     try {
       await signUp(data.email, data.password);
 
-      // Wait briefly for the session to be set after signup
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      // Create the customer record for this user
+      // signUp sets the session — create customer immediately
       const customer = await api.customers.create({
         name: data.companyName,
       });
