@@ -19,7 +19,7 @@ export default function HomePage() {
           <Link href="/about" className="text-sm text-[#1a1f2e] hover:opacity-70 transition-opacity">
             About
           </Link>
-          <Link href="/use-cases" className="text-sm text-[#1a1f2e] hover:opacity-70 transition-opacity">
+          <Link href="/case-studies" className="text-sm text-[#1a1f2e] hover:opacity-70 transition-opacity">
             Use Cases
           </Link>
           <Link href="/company/login" className="text-sm text-[#1a1f2e] hover:opacity-70 transition-opacity">
@@ -215,7 +215,7 @@ export default function HomePage() {
           <Link href="/about" className="text-xs text-[#6b6457] hover:text-[#1a1f2e] transition-colors">
             About
           </Link>
-          <Link href="/use-cases" className="text-xs text-[#6b6457] hover:text-[#1a1f2e] transition-colors">
+          <Link href="/case-studies" className="text-xs text-[#6b6457] hover:text-[#1a1f2e] transition-colors">
             Use Cases
           </Link>
           <Link href="/privacy" className="text-xs text-[#6b6457] hover:text-[#1a1f2e] transition-colors">

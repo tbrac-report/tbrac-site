@@ -115,6 +115,49 @@ export default function MethodologyPage() {
               </div>
             </div>
 
+            {/* Use Cases */}
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-bold text-foreground mb-2">Use Cases</h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  By leveraging the agentic capabilities of the Vybd protocol, the methodology creates a structured
+                  workflow for information intake, review, and report generation that adapts to the complexities of
+                  modern global logistics and trade.
+                </p>
+              </div>
+              <div className="grid gap-6 md:grid-cols-2">
+                {[
+                  {
+                    title: "Market Entry Readiness",
+                    description:
+                      "Led by agentic market intelligence tools which review regulatory exposure, ownership structure, and sector sensitivity before entering new markets.",
+                  },
+                  {
+                    title: "Partner & Supplier Review",
+                    description:
+                      "Assessing counterparties consistently through agentic screening of entity lists, ownership clarity, and compliance posture before formal engagement.",
+                  },
+                  {
+                    title: "Transaction Screening",
+                    description:
+                      "Supporting early-stage investment or deal review — identifying CFIUS triggers, export control classifications, and strategic sensitivity early in the process.",
+                  },
+                  {
+                    title: "Internal Decision Support",
+                    description:
+                      "Generating structured risk outputs for stakeholder discussions, board reporting, and internal go/no-go decisions on cross-border opportunities.",
+                  },
+                ].map((uc) => (
+                  <Card key={uc.title} className="border-border hover:border-accent transition-colors">
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-foreground mb-2">{uc.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{uc.description}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
             {/* Validation */}
             <div className="space-y-4">
               <h2 className="text-3xl font-bold text-foreground">{t("methodologyValidation")}</h2>
