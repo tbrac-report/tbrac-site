@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TBRAC Assessment Report — NovaTech Solutions Ltd.</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Georgia', serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: white;
+      padding: 40px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    .header {
+      text-align: center;
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 30px;
+      margin-bottom: 40px;
+    }
+    .logo { font-size: 32px; font-weight: bold; color: #2563eb; margin-bottom: 10px; letter-spacing: 1px; }
+    .subtitle { font-size: 18px; color: #64748b; }
+    .certificate-box {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 40px 0;
+    }
+    .certificate-title { font-size: 26px; font-weight: bold; margin-bottom: 20px; letter-spacing: 1px; }
+    .company-name { font-size: 34px; font-weight: bold; margin: 20px 0; }
+    .score-display {
+      font-size: 72px;
+      font-weight: bold;
+      margin: 30px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    .score-label { font-size: 20px; opacity: 0.9; }
+    .risk-pill {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 30px;
+      padding: 6px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+    .certificate-number {
+      font-family: 'Courier New', monospace;
+      font-size: 15px;
+      font-weight: bold;
+      opacity: 0.9;
+      margin-top: 24px;
+    }
+    .section { margin: 40px 0; }
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2563eb;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .info-label { font-weight: bold; color: #64748b; }
+    .module-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      background: #fafafa;
+    }
+    .module-name { font-weight: 600; font-size: 15px; }
+    .module-right { display: flex; align-items: center; gap: 12px; }
+    .module-score {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2563eb;
+      min-width: 60px;
+      text-align: right;
+    }
+    .risk-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .risk-low    { background: #dcfce7; color: #166534; }
+    .risk-medium { background: #fef9c3; color: #854d0e; }
+    .risk-high   { background: #fed7aa; color: #9a3412; }
+    .risk-very-high { background: #fee2e2; color: #991b1b; }
+    .score-bar-wrap {
+      width: 120px;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .score-bar { height: 100%; border-radius: 3px; }
+    .bar-low    { background: #16a34a; }
+    .bar-medium { background: #ca8a04; }
+    .bar-high   { background: #ea580c; }
+    .bar-very-high { background: #dc2626; }
+    .callout {
+      background: #f8fafc;
+      padding: 20px 24px;
+      border-radius: 8px;
+      border-left: 4px solid #2563eb;
+    }
+    .callout-item {
+      margin: 12px 0;
+      padding-left: 24px;
+      position: relative;
+      line-height: 1.7;
+    }
+    .callout-item::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #2563eb;
+      font-weight: bold;
+    }
+    .callout-item.warn::before { content: "!"; color: #ea580c; }
+    .overall-summary {
+      display: flex;
+      gap: 24px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .summary-card {
+      flex: 1;
+      min-width: 160px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      background: #f8fafc;
+    }
+    .summary-card .sc-label { font-size: 13px; color: #64748b; margin-bottom: 6px; }
+    .summary-card .sc-value { font-size: 28px; font-weight: bold; color: #1e40af; }
+    .summary-card .sc-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+    .footer {
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 2px solid #e5e7eb;
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 2;
+    }
+    @media print {
+      body { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">TBRAC</div>
+    <div class="subtitle">Trans-Border Risk Assessment and Certification</div>
+    <div class="subtitle" style="margin-top:6px; font-size:14px;">Property of Assurance Pacific Assessments LLC</div>
+  </div>
+
+  <!-- Certificate Block -->
+  <div class="certificate-box">
+    <div class="certificate-title">OFFICIAL ASSESSMENT CERTIFICATE</div>
+    <div style="font-size:16px; opacity:0.9;">This certifies that</div>
+    <div class="company-name">NovaTech Solutions Ltd.</div>
+    <div style="font-size:15px; opacity:0.85;">has completed the TBRAC U.S. Market Readiness Assessment with an overall risk score of</div>
+    <div class="score-display">36 / 100</div>
+    <div class="risk-pill">MEDIUM RISK</div>
+    <div class="certificate-number" style="margin-top:28px;">Certificate No: TBRAC-202605-a4f9b2c1</div>
+    <div style="opacity:0.85; margin-top:8px; font-size:14px;">Issued: May 17, 2026</div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="section">
+    <div class="section-title">Assessment at a Glance</div>
+    <div class="overall-summary">
+      <div class="summary-card">
+        <div class="sc-label">Overall Risk Score</div>
+        <div class="sc-value">36</div>
+        <div class="sc-sub">out of 100</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label">Risk Tier</div>
+        <div class="sc-value" style="color:#ca8a04; font-size:22px;">Medium</div>
+        <div class="sc-sub">31–50 range</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label">Modules Completed</div>
+        <div class="sc-value">10 / 10</div>
+        <div class="sc-sub">All dimensions assessed</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label">Submission Date</div>
+        <div class="sc-value" style="font-size:18px;">May 17, 2026</div>
+        <div class="sc-sub">TBRAC v1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Company Information -->
+  <div class="section">
+    <div class="section-title">Company Information</div>
+    <div class="info-grid">
+      <div class="info-label">Company Name (EN):</div>
+      <div>NovaTech Solutions Ltd.</div>
+
+      <div class="info-label">Company Name (ZH):</div>
+      <div>新科技解决方案有限公司</div>
+
+      <div class="info-label">Country of Origin:</div>
+      <div>China (People's Republic)</div>
+
+      <div class="info-label">Headquarters:</div>
+      <div>Shenzhen, Guangdong Province</div>
+
+      <div class="info-label">Industry Sector:</div>
+      <div>Technology — Enterprise Software & Cloud Services</div>
+
+      <div class="info-label">Ownership Type:</div>
+      <div>Privately Held (no state ownership)</div>
+
+      <div class="info-label">U.S. Presence:</div>
+      <div>U.S. subsidiary incorporated in Delaware (NovaTech US Inc.) — sales and support office in San Jose, CA</div>
+
+      <div class="info-label">Assessment Date:</div>
+      <div>May 17, 2026</div>
+    </div>
+  </div>
+
+  <!-- Module Breakdown -->
+  <div class="section">
+    <div class="section-title">Module-Level Risk Assessment</div>
+
+    <!-- Module 1 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">1. Regulatory Scrutiny</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">CFIUS, export controls, entity list, licensing</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-medium" style="width:62%;"></div></div>
+        <span class="risk-badge risk-medium">Medium</span>
+        <div class="module-score">62/100</div>
+      </div>
+    </div>
+
+    <!-- Module 2 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">2. Political &amp; Geopolitical Risk</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">Sanctions, bilateral climate, legislative threats</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-medium" style="width:55%;"></div></div>
+        <span class="risk-badge risk-medium">Medium</span>
+        <div class="module-score">55/100</div>
+      </div>
+    </div>
+
+    <!-- Module 3 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">3. IP Protection</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">U.S. patents, trademarks, litigation history</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-low" style="width:70%;"></div></div>
+        <span class="risk-badge risk-low">Low</span>
+        <div class="module-score">70/100</div>
+      </div>
+    </div>
+
+    <!-- Module 4 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">4. Data Security &amp; Privacy</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">CCPA/CPRA, data localization, NIST framework</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-low" style="width:72%;"></div></div>
+        <span class="risk-badge risk-low">Low</span>
+        <div class="module-score">72/100</div>
+      </div>
+    </div>
+
+    <!-- Module 5 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">5. Reputational Risk</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">Media sentiment, consumer trust, CSR</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-low" style="width:80%;"></div></div>
+        <span class="risk-badge risk-low">Low</span>
+        <div class="module-score">80/100</div>
+      </div>
+    </div>
+
+    <!-- Module 6 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">6. Market Access</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">Tariffs, non-tariff barriers, distribution</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-medium" style="width:58%;"></div></div>
+        <span class="risk-badge risk-medium">Medium</span>
+        <div class="module-score">58/100</div>
+      </div>
+    </div>
+
+    <!-- Module 7 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">7. Supply Chain</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">Origin traceability, UFLPA, supplier diversification</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-medium" style="width:65%;"></div></div>
+        <span class="risk-badge risk-medium">Medium</span>
+        <div class="module-score">65/100</div>
+      </div>
+    </div>
+
+    <!-- Module 8 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">8. Financial &amp; Economic Risks</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">Currency hedging, PCAOB, SEC readiness</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-medium" style="width:60%;"></div></div>
+        <span class="risk-badge risk-medium">Medium</span>
+        <div class="module-score">60/100</div>
+      </div>
+    </div>
+
+    <!-- Module 9 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">9. National Security</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">Dual-use technology, infrastructure proximity</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-high" style="width:48%;"></div></div>
+        <span class="risk-badge risk-high">High</span>
+        <div class="module-score">48/100</div>
+      </div>
+    </div>
+
+    <!-- Module 10 -->
+    <div class="module-row">
+      <div>
+        <div class="module-name">10. Corporate Governance</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;">Board independence, HFCAA, shareholder rights</div>
+      </div>
+      <div class="module-right">
+        <div class="score-bar-wrap"><div class="score-bar bar-low" style="width:74%;"></div></div>
+        <span class="risk-badge risk-low">Low</span>
+        <div class="module-score">74/100</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; padding:12px 16px; background:#eff6ff; border-radius:8px; font-size:14px; color:#1e40af;">
+      <strong>Score Calculation:</strong> Sum of module scores = 644 &nbsp;|&nbsp;
+      Total Risk Score = 100 − (644 ÷ 10) = <strong>36 / 100</strong> &nbsp;|&nbsp;
+      Risk Tier: <strong>Medium (31–50)</strong>
+    </div>
+  </div>
+
+  <!-- Key Strengths -->
+  <div class="section">
+    <div class="section-title">Key Strengths</div>
+    <div class="callout">
+      <div class="callout-item">Strong data security posture: CCPA/CPRA compliant, all U.S. user data stored exclusively on U.S.-based servers, NIST CSF framework implemented.</div>
+      <div class="callout-item">Clean reputational profile: no active boycott campaigns, positive or neutral U.S. media coverage, established CSR programs aligned with U.S. environmental and labor norms.</div>
+      <div class="callout-item">Robust IP portfolio: USPTO-registered patents covering core products, active trademark defense program, clean litigation history.</div>
+      <div class="callout-item">Transparent corporate governance: majority-independent board, HFCAA-compliant with full PCAOB audit access, SOX 302/404 certifications in place.</div>
+      <div class="callout-item">Fully private ownership structure with no state-owned enterprise equity or embedded CCP governance units — materially reduces CFIUS and political scrutiny.</div>
+    </div>
+  </div>
+
+  <!-- Areas of Concern -->
+  <div class="section">
+    <div class="section-title">Areas Requiring Attention</div>
+    <div class="callout">
+      <div class="callout-item warn">National Security (48/100 — High Risk): Company's enterprise AI product suite creates dual-use technology exposure. U.S. counsel review of technology transfer protocols between U.S. and PRC engineering teams is incomplete.</div>
+      <div class="callout-item warn">Political &amp; Geopolitical Risk (55/100 — Medium): Sector (AI / enterprise software) is referenced in pending RESTRICT Act provisions. Ongoing monitoring of legislative developments and FARA registration status needs formalization.</div>
+      <div class="callout-item warn">Regulatory Scrutiny (62/100 — Medium): Pre-CFIUS filing analysis has been initiated but not completed. Export Control Classification Number (ECCN) determinations for two product lines remain pending.</div>
+      <div class="callout-item warn">Financial Readiness (60/100 — Medium): No PCAOB-registered external auditor currently engaged; transition from PRC-registered firm required before any U.S. capital market activity. Currency hedging policy exists but has not been stress-tested for severe RMB/USD volatility scenarios.</div>
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="section">
+    <div class="section-title">Expert Recommendations</div>
+    <div class="callout">
+      <div class="callout-item">1. <strong>Engage qualified CFIUS counsel immediately</strong> to complete a pre-filing risk assessment and determine whether a voluntary notice is advisable prior to any U.S. investment or partnership announcement.</div>
+      <div class="callout-item">2. <strong>Establish a technology transfer firewall</strong> between U.S. and PRC engineering operations, including documented access controls, data segregation policies, and regular audits — critical to reducing the National Security module score.</div>
+      <div class="callout-item">3. <strong>Complete ECCN determinations</strong> for all product lines with qualified Export Control Counsel and implement an automated export screening system for U.S.-origin controlled components.</div>
+      <div class="callout-item">4. <strong>Transition to a PCAOB-registered auditor</strong> to enable future SEC compliance and remove a significant barrier to U.S. capital market participation.</div>
+      <div class="callout-item">5. <strong>File or confirm FARA registration status</strong> for any U.S. lobbying or government-relations activities and establish a formal sanctions monitoring workflow using an automated screening service.</div>
+      <div class="callout-item">6. <strong>Formalize supply chain traceability to Tier 2</strong> suppliers and obtain UFLPA compliance documentation from all Tier 1 suppliers operating in or near Xinjiang to eliminate customs detention risk.</div>
+    </div>
+  </div>
+
+  <!-- Methodology -->
+  <div class="section">
+    <div class="section-title">Assessment Methodology</div>
+    <p style="color:#64748b; line-height:1.8; font-size:15px;">
+      This Trans-Border Risk Assessment and Certification (TBRAC) evaluates organizations across ten comprehensive
+      risk dimensions including regulatory scrutiny, political and geopolitical risk, intellectual property protection,
+      data security and privacy, reputational risk, market access, supply chain integrity, financial and economic
+      resilience, national security exposure, and corporate governance. Each dimension is assessed using ten
+      criteria scored on a 0–10 scale by the company under assessment. Module scores (0–100) are summed and
+      inverted to produce a final risk score where higher values indicate greater risk exposure. The assessment
+      is reviewed by domain experts at Assurance Pacific Assessments LLC with deep experience in cross-border
+      market entry and U.S. regulatory compliance.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p><strong>Assurance Pacific Assessments LLC</strong></p>
+    <p>Expert Cross-Border Risk Assessment Services</p>
+    <p style="margin-top:8px;">This is an official TBRAC certification document. Certificate No: TBRAC-202605-a4f9b2c1</p>
+    <p>For verification, contact: verify@assurancepacific.com</p>
+    <p style="margin-top:8px; font-size:12px; color:#94a3b8;">
+      This report is confidential and prepared solely for the use of the named company and authorized evaluators.
+      Scores reflect self-reported data and document evidence provided by the company at the time of assessment.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
