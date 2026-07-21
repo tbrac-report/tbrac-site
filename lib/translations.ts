@@ -230,7 +230,7 @@ export const translations = {
     methodologyCategories: "The 10 Risk Categories",
     methodologyScoring: "Scoring Methodology",
     methodologyScoringText:
-      "Each of the ten modules contains ten scored criteria. Every criterion is rated on a 0–10 scale, producing a module score out of 100. The ten module scores are averaged to yield the Overall Readiness Score (0–100), where a higher score indicates stronger readiness and lower assessed risk. The platform also displays the complementary Overall Risk Score, calculated as 100 minus the Overall Readiness Score.",
+      "The TBRAC methodology uses a ten-module framework to evaluate cross-border business readiness and associated risk. Each module contains ten scored criteria, for a total of 100 scored indicators. Each criterion is rated on a 0–10 scale, where a higher score indicates stronger readiness and lower assessed risk. The ten criterion scores within each module are added together to produce a Module Readiness Score from 0 to 100. The ten Module Readiness Scores are then averaged to produce the Overall Readiness Score from 0 to 100. The platform also displays the complementary Overall Risk Score, calculated as 100 minus the Overall Readiness Score.",
     methodologyValidation: "Validation & Review",
     methodologyValidationText:
       "Submitted assessments may be subject to evaluator review depending on the scope of the engagement.",
@@ -752,7 +752,7 @@ export const translations = {
     methodologyCategories: "10个风险类别",
     methodologyScoring: "评分方法",
     methodologyScoringText:
-      "十个模块中的每一个都包含十项评分标准。每项标准按0-10分制评分，形成满分100的模块分数。十个模块分数取平均值，得出总体准备度评分（0-100分），分数越高表示准备程度越强、评估风险越低。平台同时显示相应的总体风险评分，计算方式为100减去总体准备度评分。",
+      "TBRAC方法论采用十模块框架，评估跨境业务的准备程度及相关风险。每个模块包含十项评分标准，共计100项评分指标。每项标准按0-10分制评分，分数越高表示准备程度越强、评估风险越低。每个模块内的十项标准得分相加，得出0至100分的模块准备度评分。十个模块准备度评分取平均值，得出0至100分的总体准备度评分。平台同时显示相应的总体风险评分，计算方式为100减去总体准备度评分。",
     methodologyValidation: "验证与审查",
     methodologyValidationText:
       "根据合作范围的不同，提交的评估可能会接受评估员审查。",
