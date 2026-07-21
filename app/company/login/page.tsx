@@ -180,6 +180,15 @@ export default function CompanyLoginPage() {
                         {isLoading ? t("loginSigningIn") : t("loginSubmit")}
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          onClick={() => router.push("/company/forgot-password")}
+                          className="text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
+                        >
+                          Forgot password?
+                        </button>
+                      </div>
                     </form>
                   </Form>
                 </TabsContent>

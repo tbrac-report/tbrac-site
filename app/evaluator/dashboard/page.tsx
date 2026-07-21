@@ -40,7 +40,7 @@ function DashboardContent() {
   const { user, signOut } = useAuth();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState("all");
 
   const evaluatorName = user?.email?.split("@")[0] || "Evaluator";
 
@@ -50,115 +50,40 @@ function DashboardContent() {
   }, []);
 
   const loadSubmissions = () => {
-    // Load real submission from localStorage if exists
-    const realSubmission = localStorage.getItem("tbrac_submission");
-    const mockSubmissions: Submission[] = [];
+    const daysAgo = (d: number) =>
+      new Date(Date.now() - d * 24 * 60 * 60 * 1000).toISOString();
 
-    if (realSubmission) {
-      const submission = JSON.parse(realSubmission);
-      mockSubmissions.push({
-        id: "SUB-001",
-        ...submission,
-        lastUpdated: submission.submittedAt,
-      });
-    }
+    const evaluators = [evaluatorName, "James Liu", "Sarah Chen", "Michael Park", "Emily Wang"];
 
-    // Add mock submissions for demo
     const mockData: Submission[] = [
-      {
-        id: "SUB-002",
-        companyInfo: {
-          companyName: "ByteDance Ltd.",
-          countryOfOrigin: "China",
-          industry: "Technology/Software",
-          companySize: "1000+",
-          contactEmail: "contact@bytedance.com",
-          contactName: "Zhang Wei",
-        },
-        responses: {},
-        result: {
-          overallScore: 67,
-          overallRiskLevel: "medium",
-          categoryScores: [],
-          completionPercentage: 100,
-          recommendations: [],
-          strengths: [],
-          concerns: [],
-        },
-        submittedAt: new Date(
-          Date.now() - 2 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
-        status: "under_review",
-        assignedEvaluator: evaluatorName,
-        lastUpdated: new Date(
-          Date.now() - 1 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
-      },
-      {
-        id: "SUB-003",
-        companyInfo: {
-          companyName: "Huawei Technologies",
-          countryOfOrigin: "China",
-          industry: "Telecommunications",
-          companySize: "1000+",
-          contactEmail: "global@huawei.com",
-          contactName: "Li Ming",
-        },
-        responses: {},
-        result: {
-          overallScore: 45,
-          overallRiskLevel: "high",
-          categoryScores: [],
-          completionPercentage: 100,
-          recommendations: [],
-          strengths: [],
-          concerns: [],
-        },
-        submittedAt: new Date(
-          Date.now() - 5 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
-        status: "approved",
-        assignedEvaluator: "John Smith",
-        certificateIssued: true,
-        finalScore: 48,
-        lastUpdated: new Date(
-          Date.now() - 3 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
-      },
-      {
-        id: "SUB-004",
-        companyInfo: {
-          companyName: "Alibaba Cloud",
-          countryOfOrigin: "China",
-          industry: "Technology/Software",
-          companySize: "1000+",
-          contactEmail: "cloud@alibaba.com",
-          contactName: "Wang Lei",
-        },
-        responses: {},
-        result: {
-          overallScore: 82,
-          overallRiskLevel: "low",
-          categoryScores: [],
-          completionPercentage: 100,
-          recommendations: [],
-          strengths: [],
-          concerns: [],
-        },
-        submittedAt: new Date(
-          Date.now() - 7 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
-        status: "approved",
-        assignedEvaluator: "Sarah Johnson",
-        certificateIssued: true,
-        finalScore: 85,
-        lastUpdated: new Date(
-          Date.now() - 5 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
-      },
+      { id: "SUB-001", status: "approved",       submittedAt: daysAgo(2),  assignedEvaluator: evaluators[0], certificateIssued: true,  finalScore: 60, companyInfo: { companyName: "NovaTech Solutions Ltd.",            countryOfOrigin: "China", industry: "Technology",          contactName: "Lin Wei"     }, responses: {}, result: { overallScore: 60, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(1)  },
+      { id: "SUB-002", status: "approved",       submittedAt: daysAgo(3),  assignedEvaluator: evaluators[1], certificateIssued: true,  finalScore: 59, companyInfo: { companyName: "Sino-Pacific Semiconductor Corp.",   countryOfOrigin: "China", industry: "Semiconductors",      contactName: "Zhang Hao"   }, responses: {}, result: { overallScore: 59, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(2)  },
+      { id: "SUB-003", status: "approved",       submittedAt: daysAgo(4),  assignedEvaluator: evaluators[2], certificateIssued: true,  finalScore: 64, companyInfo: { companyName: "Eastern Shield Cybersecurity Inc.",  countryOfOrigin: "China", industry: "Technology",          contactName: "Chen Fang"   }, responses: {}, result: { overallScore: 64, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(3)  },
+      { id: "SUB-004", status: "approved",       submittedAt: daysAgo(5),  assignedEvaluator: evaluators[3], certificateIssued: true,  finalScore: 74, companyInfo: { companyName: "Huang River Energy Group",           countryOfOrigin: "China", industry: "Energy",              contactName: "Wang Peng"   }, responses: {}, result: { overallScore: 74, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(4)  },
+      { id: "SUB-005", status: "approved",       submittedAt: daysAgo(6),  assignedEvaluator: evaluators[4], certificateIssued: true,  finalScore: 71, companyInfo: { companyName: "Bright Future Consumer Electronics", countryOfOrigin: "China", industry: "Consumer Goods",      contactName: "Liu Ying"    }, responses: {}, result: { overallScore: 71, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(5)  },
+      { id: "SUB-006", status: "approved",       submittedAt: daysAgo(7),  assignedEvaluator: evaluators[0], certificateIssued: true,  finalScore: 73, companyInfo: { companyName: "Dragon Gate Financial Holdings",     countryOfOrigin: "China", industry: "Financial Services",  contactName: "Zhao Min"    }, responses: {}, result: { overallScore: 73, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(6)  },
+      { id: "SUB-007", status: "approved",       submittedAt: daysAgo(9),  assignedEvaluator: evaluators[1], certificateIssued: true,  finalScore: 64, companyInfo: { companyName: "Precision Robotics Manufacturing Co.", countryOfOrigin: "China", industry: "Manufacturing",       contactName: "Sun Lei"     }, responses: {}, result: { overallScore: 64, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(8)  },
+      { id: "SUB-008", status: "approved",       submittedAt: daysAgo(10), assignedEvaluator: evaluators[2], certificateIssued: true,  finalScore: 75, companyInfo: { companyName: "MedCore Biotech Group",               countryOfOrigin: "China", industry: "Healthcare",          contactName: "Li Jing"     }, responses: {}, result: { overallScore: 75, overallRiskLevel: "low",    categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(9)  },
+      { id: "SUB-009", status: "approved",       submittedAt: daysAgo(11), assignedEvaluator: evaluators[3], certificateIssued: true,  finalScore: 51, companyInfo: { companyName: "TransAsia Telecommunications Ltd.",  countryOfOrigin: "China", industry: "Telecommunications", contactName: "Xu Feng"     }, responses: {}, result: { overallScore: 51, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(10) },
+      { id: "SUB-010", status: "approved",       submittedAt: daysAgo(13), assignedEvaluator: evaluators[4], certificateIssued: true,  finalScore: 71, companyInfo: { companyName: "Greenfield Agricultural Exports",    countryOfOrigin: "China", industry: "Agriculture",         contactName: "Gao Rui"     }, responses: {}, result: { overallScore: 71, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(12) },
+      { id: "SUB-011", status: "approved",       submittedAt: daysAgo(14), assignedEvaluator: evaluators[0], certificateIssued: true,  finalScore: 58, companyInfo: { companyName: "Summit Cloud Technologies",          countryOfOrigin: "China", industry: "Technology",          contactName: "He Ling"     }, responses: {}, result: { overallScore: 58, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(13) },
+      { id: "SUB-012", status: "under_review",   submittedAt: daysAgo(15), assignedEvaluator: evaluators[1],                           companyInfo: { companyName: "Pacific Rim Retail Group",           countryOfOrigin: "China", industry: "Retail",              contactName: "Tang Bo"     }, responses: {}, result: { overallScore: 71, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(14) },
+      { id: "SUB-013", status: "under_review",   submittedAt: daysAgo(16), assignedEvaluator: evaluators[2],                           companyInfo: { companyName: "Yangtze Capital Ventures",           countryOfOrigin: "China", industry: "Financial Services",  contactName: "Jiang Mei"   }, responses: {}, result: { overallScore: 55, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(15) },
+      { id: "SUB-014", status: "under_review",   submittedAt: daysAgo(17), assignedEvaluator: evaluators[3],                           companyInfo: { companyName: "Qingdao Smart Manufacturing",        countryOfOrigin: "China", industry: "Manufacturing",       contactName: "Luo Jian"    }, responses: {}, result: { overallScore: 55, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(16) },
+      { id: "SUB-015", status: "under_review",   submittedAt: daysAgo(18), assignedEvaluator: evaluators[4],                           companyInfo: { companyName: "BioHorizons Pharmaceuticals",        countryOfOrigin: "China", industry: "Healthcare",          contactName: "Peng Xia"    }, responses: {}, result: { overallScore: 65, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(17) },
+      { id: "SUB-016", status: "under_review",   submittedAt: daysAgo(19), assignedEvaluator: evaluators[0],                           companyInfo: { companyName: "Chengdu Aerospace Systems",          countryOfOrigin: "China", industry: "Defense",             contactName: "Cai Long"    }, responses: {}, result: { overallScore: 40, overallRiskLevel: "high",   categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(18) },
+      { id: "SUB-017", status: "under_review",   submittedAt: daysAgo(20), assignedEvaluator: evaluators[1],                           companyInfo: { companyName: "IntelliDrive Automotive AI",         countryOfOrigin: "China", industry: "Technology",          contactName: "Deng Hui"    }, responses: {}, result: { overallScore: 69, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(19) },
+      { id: "SUB-018", status: "under_review",   submittedAt: daysAgo(21), assignedEvaluator: evaluators[2],                           companyInfo: { companyName: "Coastal Clean Energy Corp.",         countryOfOrigin: "China", industry: "Energy",              contactName: "Fang Yu"     }, responses: {}, result: { overallScore: 50, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(20) },
+      { id: "SUB-019", status: "under_review",   submittedAt: daysAgo(22), assignedEvaluator: evaluators[3],                           companyInfo: { companyName: "ShenzhenConnect Fiber Networks",     countryOfOrigin: "China", industry: "Telecommunications", contactName: "Gu Tao"      }, responses: {}, result: { overallScore: 53, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(21) },
+      { id: "SUB-020", status: "under_review",   submittedAt: daysAgo(23), assignedEvaluator: evaluators[4],                           companyInfo: { companyName: "Harmony Consumer Brands",            countryOfOrigin: "China", industry: "Consumer Goods",      contactName: "Hou Nan"     }, responses: {}, result: { overallScore: 68, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(22) },
+      { id: "SUB-021", status: "pending_review", submittedAt: daysAgo(24),                                                              companyInfo: { companyName: "Quantum Materials Science Ltd.",    countryOfOrigin: "China", industry: "Semiconductors",      contactName: "Jin Kai"     }, responses: {}, result: { overallScore: 53, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(24) },
+      { id: "SUB-022", status: "pending_review", submittedAt: daysAgo(25),                                                              companyInfo: { companyName: "Northern Star Trade Finance",       countryOfOrigin: "China", industry: "Financial Services",  contactName: "Kong Wei"    }, responses: {}, result: { overallScore: 47, overallRiskLevel: "high",   categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(25) },
+      { id: "SUB-023", status: "pending_review", submittedAt: daysAgo(26),                                                              companyInfo: { companyName: "SinoMed Healthcare Solutions",      countryOfOrigin: "China", industry: "Healthcare",          contactName: "Liang Hua"   }, responses: {}, result: { overallScore: 53, overallRiskLevel: "medium", categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(26) },
+      { id: "SUB-024", status: "pending_review", submittedAt: daysAgo(28),                                                              companyInfo: { companyName: "Future Grid Power Systems",         countryOfOrigin: "China", industry: "Energy",              contactName: "Mao Zhen"    }, responses: {}, result: { overallScore: 28, overallRiskLevel: "high",   categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(28) },
+      { id: "SUB-025", status: "pending_review", submittedAt: daysAgo(30),                                                              companyInfo: { companyName: "Nexus Digital Commerce Group",     countryOfOrigin: "China", industry: "Retail",              contactName: "Ni Jing"     }, responses: {}, result: { overallScore: 13, overallRiskLevel: "high",   categoryScores: [], completionPercentage: 100, recommendations: [], strengths: [], concerns: [] }, lastUpdated: daysAgo(30) },
     ];
 
-    setSubmissions([...mockSubmissions, ...mockData]);
+    setSubmissions(mockData);
   };
 
   const handleLogout = async () => {

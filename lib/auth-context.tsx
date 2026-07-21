@@ -11,6 +11,8 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
+  resetPassword: (email: string, redirectTo: string) => Promise<void>
+  updatePassword: (password: string) => Promise<void>
   isAuthenticated: boolean
 }
 
@@ -70,6 +72,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
   }
 
+  // Sends a password-recovery email. The link returns the user to `redirectTo`
+  // with a recovery session active, where updatePassword can be called.
+  const resetPassword = async (email: string, redirectTo: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    })
+    if (error) throw error
+  }
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) throw error
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -79,6 +95,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signIn,
         signUp,
         signOut,
+        resetPassword,
+        updatePassword,
         isAuthenticated: !!user,
       }}
     >
