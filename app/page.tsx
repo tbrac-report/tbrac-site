@@ -87,7 +87,7 @@ export default function HomePage() {
           {
             icon: Activity,
             title: "Risk Scoring",
-            desc: "Proprietary algorithms calculate a precise readiness score, highlighting critical gaps before they become blockers.",
+            desc: "The TBRAC scoring methodology calculates a precise readiness score, highlighting critical gaps before they become blockers.",
           },
           {
             icon: FileText,

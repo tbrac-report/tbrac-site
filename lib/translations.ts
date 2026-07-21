@@ -32,7 +32,7 @@ export const translations = {
     trustIndicator2:
       "The TBRAC is a global/multilingual system which can intake and understand paperwork from around the world.",
     trustIndicator3:
-      "Our TBRAC evaluation engine was built by domain experts in cross-border business, data security, and regulatory compliance.",
+      "The TBRAC methodology was built by domain experts in cross-border business, data security, and regulatory compliance.",
 
     // Features Section
     frameworkTitle: "Comprehensive Risk Assessment Framework",
@@ -53,12 +53,16 @@ export const translations = {
     reputationalRisk: "Reputational Risk",
     nationalSecurity: "National Security",
 
-    regulatoryDesc: "Assessment of CFIUS reviews, export controls, and compliance with sector-specific regulations",
-    politicalDesc: "Analysis of trade tensions, sanctions, tariffs, and shifting political climate impacts",
-    dataSecurityDesc: "Evaluation of data protection compliance, localization requirements, and cybersecurity measures",
-    ipDesc: "Review of intellectual property portfolio, enforcement mechanisms, and litigation history",
-    reputationalDesc: "Analysis of media coverage, public sentiment, and potential boycott risks",
-    nationalSecurityDesc: "Scrutiny of critical infrastructure involvement and sensitive technology development",
+    regulatoryDesc: "CFIUS review exposure, export controls, and sector-specific compliance",
+    politicalDesc: "Trade tensions, sanctions, tariffs, and legislative climate",
+    dataSecurityDesc: "CCPA/CPRA compliance, data localization, and cybersecurity controls",
+    ipDesc: "Patent and trademark coverage, enforcement mechanisms, and litigation history",
+    reputationalDesc: "Media sentiment, consumer trust, and crisis preparedness",
+    nationalSecurityDesc: "Dual-use technology, technology-transfer controls, and infrastructure proximity",
+    marketAccessDesc: "Tariffs, non-tariff barriers, distribution channels, and compliance costs",
+    supplyChainDesc: "Origin traceability, UFLPA compliance, and supplier diversification",
+    financialEconomicDesc: "Currency exposure, financial-reporting transparency, and U.S. banking readiness",
+    corporateGovernanceDesc: "Board independence, related-party controls, and audit oversight",
 
     ctaTitle: "Ready to Navigate US Market Entry with Confidence?",
     ctaDescription:
@@ -96,7 +100,7 @@ export const translations = {
     expectStep2Desc: "Receive immediate feedback on your risk profile with a comprehensive 0-100 score.",
     expectStep3Title: "Expert Review & Final Report",
     expectStep3Desc:
-      "Our evaluation engine will review your responses, supporting data you provide, and any publicly available information about your company to provide a detailed certification report.",
+      "Our evaluators will review your responses, supporting data you provide, and any publicly available information about your company to provide a detailed certification report.",
 
     // Assessment Form
     category: "Category",
@@ -125,11 +129,11 @@ export const translations = {
     dataSecurityPrivacy: "Data Security & Privacy",
     ipProtection: "IP Protection",
     reputationalRisk: "Reputational Risk",
-    nationalSecurityConcerns: "National Security Concerns",
-    supplyChainTransparency: "Supply Chain Transparency",
-    marketCompetition: "Market Competition & Behavior",
-    laborPractices: "Labor & Employment Practices",
-    environmentalGovernance: "Environmental & Social Governance",
+    marketAccess: "Market Access",
+    supplyChain: "Supply Chain",
+    financialEconomicRisks: "Financial & Economic Risks",
+    nationalSecurityConcerns: "National Security",
+    corporateGovernance: "Corporate Governance",
 
     // Company Size Options
     employees1to50: "1-50 Employees",
@@ -175,10 +179,10 @@ export const translations = {
     riskLevel: "Risk Level",
     assessmentComplete: "Assessment Complete",
     scoreInterpretation: "Score Interpretation",
-    lowRiskDescription: "Low Risk - Strong readiness for US market entry",
-    mediumRiskDescription: "Medium Risk - Some concerns to address",
-    highRiskDescription: "High Risk - Significant preparation needed",
-    criticalRiskDescription: "Critical Risk - Major obstacles present",
+    tierLowRisk: "Low Risk — Well Prepared",
+    tierModerateLow: "Moderate-Low — Substantially Ready",
+    tierModerateHigh: "Moderate-High — Focused Remediation Needed",
+    tierHighRisk: "High Risk — Not Yet Ready",
     categoryScores: "Category Scores",
     performanceAcrossCategories: "Performance across all 10 risk categories",
     riskProfile: "Risk Profile",
@@ -212,10 +216,10 @@ export const translations = {
       "In an era of increasing geopolitical complexity, the need for standardized risk assessment has never been greater. High-profile cases like TikTok have demonstrated the challenges that arise when risk evaluation is conducted reactively rather than proactively. TBRAC provides a framework for addressing these concerns before they escalate.",
     aboutApproach: "Our Approach",
     aboutApproachText:
-      "TBRAC utilizes a multi-variable assessment model that evaluates companies across 10 key risk categories. Our evaluation engine analyzes responses, supporting documentation, and publicly available information to generate comprehensive certification reports that can be presented to regulatory authorities at local, state, and federal levels.",
+      "TBRAC utilizes a multi-variable assessment model that evaluates companies across 10 key risk categories. Our evaluators analyze responses, supporting documentation, and publicly available information to generate comprehensive certification reports that can be presented to regulatory authorities at local, state, and federal levels.",
     aboutTeam: "Built by Experts",
     aboutTeamText:
-      "Our TBRAC evaluation engine was built by domain experts in cross-border business, data security, and regulatory compliance. This expertise ensures that our assessments address the real concerns of government stakeholders while providing actionable insights for companies.",
+      "The TBRAC methodology was built by domain experts in cross-border business, data security, and regulatory compliance. This expertise ensures that our assessments address the real concerns of government stakeholders while providing actionable insights for companies.",
 
     // Methodology Page
     methodologyPageTitle: "Assessment Methodology",
@@ -226,10 +230,10 @@ export const translations = {
     methodologyCategories: "The 10 Risk Categories",
     methodologyScoring: "Scoring Methodology",
     methodologyScoringText:
-      "Each question in the assessment contributes to category scores based on weighted algorithms that reflect the relative importance of different risk factors. The final score provides a clear, actionable measure of readiness for cross-border operations.",
+      "Each of the ten modules contains ten scored criteria. Every criterion is rated on a 0–10 scale, producing a module score out of 100. The ten module scores are averaged to yield the Overall Readiness Score (0–100), where a higher score indicates stronger readiness and lower assessed risk. The platform also displays the complementary Overall Risk Score, calculated as 100 minus the Overall Readiness Score.",
     methodologyValidation: "Validation & Review",
     methodologyValidationText:
-      "All assessments undergo automated validation checks followed by comprehensive review by our evaluation engine, which cross-references responses with publicly available data to ensure accuracy and completeness.",
+      "Submitted assessments may be subject to evaluator review depending on the scope of the engagement.",
 
     // Contact Page
     contactPageTitle: "Contact Us",
@@ -259,13 +263,13 @@ export const translations = {
       "TBRAC is designed for companies looking to expand into international markets, particularly those seeking to establish operations in the United States. It is also valuable for government agencies, investors, and partners who need to evaluate the risk profile of potential business relationships.",
     faqQuestion3: "How long does the assessment take?",
     faqAnswer3:
-      "The initial assessment typically takes 30-45 minutes to complete. After submission, our evaluation engine reviews the responses and generates a comprehensive report within 5-7 business days.",
+      "The initial assessment typically takes 30-45 minutes to complete. After submission, submitted assessments may be subject to evaluator review, and a comprehensive report is generated within 5-7 business days.",
     faqQuestion4: "What languages are supported?",
     faqAnswer4:
       "TBRAC is a global/multilingual system that can intake and understand paperwork from around the world. The assessment interface is currently available in English and Simplified Chinese.",
     faqQuestion5: "How is the score calculated?",
     faqAnswer5:
-      "Scores are calculated using a weighted algorithm across 10 risk categories, each scored 0-10 points. The total score ranges from 0-100, with higher scores indicating lower risk and greater readiness for market entry.",
+      "Each of the ten modules contains ten criteria scored 0-10, producing a module score out of 100. The ten module scores are averaged, without weighting, to produce the Overall Readiness Score (0-100), with higher scores indicating lower risk and greater readiness for market entry.",
     faqQuestion6: "Can I update my assessment?",
     faqAnswer6:
       "Yes, the ability to recalculate existing reports with new information is a feature that will be released soon. You will also be able to respond to requests for renewed or annual reports from external organizations.",
@@ -304,7 +308,7 @@ export const translations = {
       "You agree to provide accurate and complete information in your assessment. Providing false or misleading information may result in inaccurate reports and potential legal consequences.",
     termsIP: "Intellectual Property",
     termsIPText:
-      "The TBRAC methodology, scoring algorithms, and report formats are the intellectual property of Assurance Pacific Assessments LLC. You may share your assessment reports with relevant stakeholders but may not reproduce the assessment methodology.",
+      "The TBRAC methodology, scoring criteria, and report formats are the intellectual property of Assurance Pacific Assessments LLC. You may share your assessment reports with relevant stakeholders but may not reproduce the assessment methodology.",
     termsLimitation: "Limitation of Liability",
     termsLimitationText:
       "Assurance Pacific Assessments LLC is not liable for any decisions made based on TBRAC reports. Users should consult with legal and regulatory experts before making business decisions.",
@@ -553,7 +557,7 @@ export const translations = {
     // Trust Indicators
     trustIndicator1: "TBRAC可以提供给美国地方、州和联邦当局，确保所有利益相关者安心。",
     trustIndicator2: "TBRAC是一个全球化/多语言系统，可以接收和理解来自世界各地的文件。",
-    trustIndicator3: "我们的TBRAC评估引擎由跨境商业、数据安全和监管合规方面的领域专家构建。",
+    trustIndicator3: "TBRAC方法论由跨境商业、数据安全和监管合规方面的领域专家构建。",
 
     // Features Section
     frameworkTitle: "全面的风险评估框架",
@@ -574,12 +578,16 @@ export const translations = {
     reputationalRisk: "声誉风险",
     nationalSecurity: "国家安全",
 
-    regulatoryDesc: "评估CFIUS审查、出口管制以及符合特定行业法规的情况",
-    politicalDesc: "分析贸易紧张关系、制裁、关税以及政治气候变化的影响",
-    dataSecurityDesc: "评估数据保护合规性、本地化要求和网络安全措施",
-    ipDesc: "审查知识产权组合、执行机制和诉讼历史",
-    reputationalDesc: "分析媒体报道、公众情绪和潜在抵制风险",
-    nationalSecurityDesc: "审查关键基础设施参与情况和敏感技术开发",
+    regulatoryDesc: "CFIUS审查风险、出口管制以及特定行业合规要求",
+    politicalDesc: "贸易紧张关系、制裁、关税及立法环境变化",
+    dataSecurityDesc: "CCPA/CPRA合规、数据本地化和网络安全控制",
+    ipDesc: "专利与商标覆盖范围、执行机制和诉讼历史",
+    reputationalDesc: "媒体情绪、消费者信任和危机应对准备",
+    nationalSecurityDesc: "军民两用技术、技术转让管制和基础设施邻近性",
+    marketAccessDesc: "关税、非关税壁垒、分销渠道和合规成本",
+    supplyChainDesc: "原产地可追溯性、UFLPA合规和供应商多样化",
+    financialEconomicDesc: "货币敞口、财务报告透明度和美国银行业务准备情况",
+    corporateGovernanceDesc: "董事会独立性、关联方控制和审计监督",
 
     ctaTitle: "准备好自信地进入美国市场了吗？",
     ctaDescription:
@@ -616,7 +624,7 @@ export const translations = {
     expectStep2Desc: "通过全面的0-100分制立即了解您的风险概况反馈。",
     expectStep3Title: "专家审查与最终报告",
     expectStep3Desc:
-      "我们的评估引擎将审查您的回答、您提供的支持数据以及任何关于您公司的公开信息，以提供详细的认证报告。",
+      "我们的评估员将审查您的回答、您提供的支持数据以及任何关于您公司的公开信息，以提供详细的认证报告。",
 
     // Assessment Form
     category: "类别",
@@ -645,11 +653,11 @@ export const translations = {
     dataSecurityPrivacy: "数据安全与隐私",
     ipProtection: "知识产权保护",
     reputationalRisk: "声誉风险",
-    nationalSecurityConcerns: "国家安全担忧",
-    supplyChainTransparency: "供应链透明度",
-    marketCompetition: "市场竞争与行为",
-    laborPractices: "劳工与就业实践",
-    environmentalGovernance: "环境与社会治理",
+    marketAccess: "市场准入",
+    supplyChain: "供应链",
+    financialEconomicRisks: "财务与经济风险",
+    nationalSecurityConcerns: "国家安全",
+    corporateGovernance: "公司治理",
 
     // Company Size Options
     employees1to50: "1-50名员工",
@@ -694,10 +702,10 @@ export const translations = {
     riskLevel: "风险等级",
     assessmentComplete: "评估完成",
     scoreInterpretation: "分数解释",
-    lowRiskDescription: "低风险 - 进入美国市场准备充分",
-    mediumRiskDescription: "中等风险 - 需要解决一些问题",
-    highRiskDescription: "高风险 - 需要大量准备",
-    criticalRiskDescription: "关键风险 - 存在重大障碍",
+    tierLowRisk: "低风险 — 准备充分",
+    tierModerateLow: "中低风险 — 基本准备就绪",
+    tierModerateHigh: "中高风险 — 需重点整改",
+    tierHighRisk: "高风险 — 尚未准备就绪",
     categoryScores: "类别分数",
     performanceAcrossCategories: "所有10个风险类别的表现",
     riskProfile: "风险概况",
@@ -730,10 +738,10 @@ export const translations = {
       "在地缘政治日益复杂的时代，标准化风险评估的需求从未如此迫切。TikTok等高调案例表明，当风险评估是被动而非主动进行时会出现的挑战。TBRAC提供了一个在问题升级之前解决这些担忧的框架。",
     aboutApproach: "我们的方法",
     aboutApproachText:
-      "TBRAC采用多变量评估模型，从10个关键风险类别评估公司。我们的评估引擎分析回答、支持文件和公开可用信息，生成可向地方、州和联邦级监管机构提交的综合认证报告。",
+      "TBRAC采用多变量评估模型，从10个关键风险类别评估公司。我们的评估员分析回答、支持文件和公开可用信息，生成可向地方、州和联邦级监管机构提交的综合认证报告。",
     aboutTeam: "专家构建",
     aboutTeamText:
-      "我们的TBRAC评估引擎由跨境商业、数据安全和监管合规方面的领域专家构建。这一专业知识确保我们的评估能够解决政府利益相关者的实际关切，同时为公司提供可行的见解。",
+      "TBRAC方法论由跨境商业、数据安全和监管合规方面的领域专家构建。这一专业知识确保我们的评估能够解决政府利益相关者的实际关切，同时为公司提供可行的见解。",
 
     // Methodology Page
     methodologyPageTitle: "评估方法论",
@@ -744,10 +752,10 @@ export const translations = {
     methodologyCategories: "10个风险类别",
     methodologyScoring: "评分方法",
     methodologyScoringText:
-      "评估中的每个问题都根据反映不同风险因素相对重要性的加权算法为类别分数做出贡献。最终分数为跨境运营准备情况提供了清晰、可操作的衡量标准。",
+      "十个模块中的每一个都包含十项评分标准。每项标准按0-10分制评分，形成满分100的模块分数。十个模块分数取平均值，得出总体准备度评分（0-100分），分数越高表示准备程度越强、评估风险越低。平台同时显示相应的总体风险评分，计算方式为100减去总体准备度评分。",
     methodologyValidation: "验证与审查",
     methodologyValidationText:
-      "所有评估都经过自动验证检查，然后由我们的评估引擎进行全面审查，将回答与公开可用数据交叉引用以确保准确性和完整性。",
+      "根据合作范围的不同，提交的评估可能会接受评估员审查。",
 
     // Contact Page
     contactPageTitle: "联系我们",
@@ -776,13 +784,13 @@ export const translations = {
       "TBRAC专为希望扩展到国际市场的公司设计，特别是那些寻求在美国建立业务的公司。它对需要评估潜在商业关系风险概况的政府机构、投资者和合作伙伴也很有价值。",
     faqQuestion3: "评估需要多长时间？",
     faqAnswer3:
-      "初始评估通常需要30-45分钟完成。提交后，我们的评估引擎审查回答并在5-7个工作日内生成综合报告。",
+      "初始评估通常需要30-45分钟完成。提交后，评估可能会接受评估员审查，并在5-7个工作日内生成综合报告。",
     faqQuestion4: "支持哪些语言？",
     faqAnswer4:
       "TBRAC是一个全球化/多语言系统，可以接收和理解来自世界各地的文件。评估界面目前提供英语和简体中文版本。",
     faqQuestion5: "分数是如何计算的？",
     faqAnswer5:
-      "分数使用跨10个风险类别的加权算法计算，每个类别评分为0-10分。总分范围为0-100，分数越高表示风险越低，市场进入准备越充分。",
+      "十个模块中的每一个都包含十项按0-10分制评分的标准，形成满分100的模块分数。十个模块分数取平均值（不加权），得出总体准备度评分（0-100分），分数越高表示风险越低，市场进入准备越充分。",
     faqQuestion6: "我可以更新我的评估吗？",
     faqAnswer6:
       "是的，使用新信息重新计算现有报告的功能即将发布。您还可以响应外部组织对更新或年度报告的请求。",
@@ -820,7 +828,7 @@ export const translations = {
       "您同意在评估中提供准确完整的信息。提供虚假或误导性信息可能导致报告不准确并可能产生法律后果。",
     termsIP: "知识产权",
     termsIPText:
-      "TBRAC方法论、评分算法和报告格式是Assurance Pacific Assessments LLC的知识产权。您可以与相关利益相关者分享您的评估报告，但不得复制评估方法。",
+      "TBRAC方法论、评分标准和报告格式是Assurance Pacific Assessments LLC的知识产权。您可以与相关利益相关者分享您的评估报告，但不得复制评估方法。",
     termsLimitation: "责任限制",
     termsLimitationText:
       "Assurance Pacific Assessments LLC对基于TBRAC报告做出的任何决定不承担责任。用户在做出商业决策前应咨询法律和监管专家。",

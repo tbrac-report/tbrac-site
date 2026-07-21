@@ -17,7 +17,7 @@ const TEAM = [
     name: "Ken Chester",
     role: "Co-Founder · Market Entry Lead",
     contribution:
-      "Leads market entry strategy and the application of risk frameworks to real-world commercial expansion. Alongside Ashwin, he co-founded and invented the Vybd protocol, the agentic commerce foundation layer that underpins the TBRAC assessment system.",
+      "Leads market entry strategy and the application of risk frameworks to real-world commercial expansion.",
     background:
       "Serial entrepreneur with a background in technology, investment, and U.S.-China commercial relations. Regional NSF Innovation Corps grant recipient.",
   },
@@ -25,7 +25,7 @@ const TEAM = [
     name: "Ashwin Dhanasamy",
     role: "Co-Founder · Platform Engineering Lead",
     contribution:
-      "Leads the technical architecture and engineering development, transforming the TBRAC framework into a functional digital system. As the primary architect of the Vybd protocol, he designed the agentic infrastructure that provides the technical foundation for TBRAC.",
+      "Leads the technical architecture and engineering development, transforming the TBRAC framework into a functional digital system.",
     background:
       "Experienced machine learning and AI engineer focused on developing decentralized protocols and autonomous agent infrastructure for global commerce.",
   },
@@ -73,9 +73,7 @@ export default function AboutPage() {
                     <h2 className="text-2xl font-bold text-foreground mb-4">What We Do</h2>
                     <p className="text-muted-foreground leading-relaxed mb-4">
                       TBRAC is a structured cross-border risk assessment and reporting platform designed to help
-                      organizations navigate international business decisions. The platform is uniquely powered by the
-                      Vybd protocol — an agentic commerce foundation layer working collaboratively with the TBRAC
-                      framework — enabling highly dynamic, automated risk assessments for global commerce.
+                      organizations navigate international business decisions.
                     </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
                       <p>

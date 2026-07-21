@@ -12,7 +12,7 @@ import {
   Building,
   Link as LinkIcon,
   Scale,
-  Leaf,
+  Globe,
   Briefcase,
 } from "lucide-react"
 
@@ -22,14 +22,14 @@ export default function MethodologyPage() {
   const categories = [
     { icon: Shield, name: t("regulatoryScrutiny"), description: t("regulatoryDesc") },
     { icon: TrendingUp, name: t("politicalGeopoliticalRisk"), description: t("politicalDesc") },
-    { icon: Lock, name: t("dataSecurityPrivacy"), description: t("dataSecurityDesc") },
     { icon: FileText, name: t("ipProtection"), description: t("ipDesc") },
+    { icon: Lock, name: t("dataSecurityPrivacy"), description: t("dataSecurityDesc") },
     { icon: Users, name: t("reputationalRisk"), description: t("reputationalDesc") },
+    { icon: Globe, name: t("marketAccess"), description: t("marketAccessDesc") },
+    { icon: LinkIcon, name: t("supplyChain"), description: t("supplyChainDesc") },
+    { icon: Briefcase, name: t("financialEconomicRisks"), description: t("financialEconomicDesc") },
     { icon: Building, name: t("nationalSecurityConcerns"), description: t("nationalSecurityDesc") },
-    { icon: LinkIcon, name: t("supplyChainTransparency"), description: "Assessment of supply chain visibility, vendor relationships, and sourcing practices" },
-    { icon: Scale, name: t("marketCompetition"), description: "Evaluation of competitive practices, market behavior, and antitrust considerations" },
-    { icon: Briefcase, name: t("laborPractices"), description: "Review of employment practices, labor standards, and workforce policies" },
-    { icon: Leaf, name: t("environmentalGovernance"), description: "Assessment of environmental impact, ESG policies, and sustainability practices" },
+    { icon: Scale, name: t("corporateGovernance"), description: t("corporateGovernanceDesc") },
   ]
 
   return (
@@ -91,25 +91,25 @@ export default function MethodologyPage() {
                 <Card className="border-accent bg-accent/5">
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-accent">80-100</div>
-                    <div className="text-sm text-muted-foreground">{t("lowRiskDescription")}</div>
+                    <div className="text-sm text-muted-foreground">{t("tierLowRisk")}</div>
                   </CardContent>
                 </Card>
                 <Card className="border-secondary bg-secondary/5">
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-secondary">60-79</div>
-                    <div className="text-sm text-muted-foreground">{t("mediumRiskDescription")}</div>
+                    <div className="text-sm text-muted-foreground">{t("tierModerateLow")}</div>
                   </CardContent>
                 </Card>
                 <Card className="border-orange-500 bg-orange-500/5">
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-orange-500">40-59</div>
-                    <div className="text-sm text-muted-foreground">{t("highRiskDescription")}</div>
+                    <div className="text-sm text-muted-foreground">{t("tierModerateHigh")}</div>
                   </CardContent>
                 </Card>
                 <Card className="border-destructive bg-destructive/5">
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-destructive">0-39</div>
-                    <div className="text-sm text-muted-foreground">{t("criticalRiskDescription")}</div>
+                    <div className="text-sm text-muted-foreground">{t("tierHighRisk")}</div>
                   </CardContent>
                 </Card>
               </div>
@@ -120,9 +120,8 @@ export default function MethodologyPage() {
               <div>
                 <h2 className="text-3xl font-bold text-foreground mb-2">Use Cases</h2>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  By leveraging the agentic capabilities of the Vybd protocol, the methodology creates a structured
-                  workflow for information intake, review, and report generation that adapts to the complexities of
-                  modern global logistics and trade.
+                  The TBRAC methodology supports a structured workflow for information intake, assessment, and report
+                  generation across the following use cases.
                 </p>
               </div>
               <div className="grid gap-6 md:grid-cols-2">
@@ -130,12 +129,12 @@ export default function MethodologyPage() {
                   {
                     title: "Market Entry Readiness",
                     description:
-                      "Led by agentic market intelligence tools which review regulatory exposure, ownership structure, and sector sensitivity before entering new markets.",
+                      "Structured review of market intelligence, regulatory exposure, ownership structure, and sector sensitivity before entering new markets.",
                   },
                   {
                     title: "Partner & Supplier Review",
                     description:
-                      "Assessing counterparties consistently through agentic screening of entity lists, ownership clarity, and compliance posture before formal engagement.",
+                      "Assessing counterparties consistently through structured review of entity lists, ownership clarity, and compliance posture before formal engagement.",
                   },
                   {
                     title: "Transaction Screening",
